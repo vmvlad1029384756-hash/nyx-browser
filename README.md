@@ -30,3 +30,20 @@ The site is connected to Cloudflare Pages through this GitHub repository. A push
 
 ## Accuracy note
 The Windows download button remains disabled until a real installer URL is published. The website is installable on supported phones, but native mobile browser builds must not be described as released until they are built and tested.
+
+## Windows installer build
+
+The Windows x64 installer is built from the desktop source archive by `build-windows.ps1`.
+The script creates an isolated Python 3.13 environment, runs the regression tests, packages
+the browser with PyInstaller, and compiles a per-user Setup.exe with Inno Setup 6.
+End users only need the installer; Python and Inno Setup are not required.
+
+To build locally, install Python 3.13 x64 and Inno Setup 6, then run:
+
+```powershell
+.\build-windows.ps1
+```
+
+The GitHub Actions workflow `.github/workflows/windows-installer.yml` validates pull requests
+and attaches the installer plus its SHA-256 checksum to version-tagged prereleases.
+The current Windows preview is intended for testing and is not code-signed.
