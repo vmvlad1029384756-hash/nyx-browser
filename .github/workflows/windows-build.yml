@@ -2,6 +2,10 @@ name: Windows installer
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "NYX_Browser_1.0.0-dev.3.2_ThemeWidgets.zip"
+      - ".github/workflows/windows-build.yml"
   push:
     branches: [main]
     paths:
