@@ -16,7 +16,6 @@ DisableProgramGroupPage=yes
 DisableDirPage=no
 UninstallDisplayIcon={app}\{#AppExeName}
 UninstallDisplayName={#AppName}
-UninstallDisplayVersion={#AppVersion}
 WizardStyle=modern
 SetupIconFile=..\nyx\assets\nyx.ico
 OutputDir=..\installer
