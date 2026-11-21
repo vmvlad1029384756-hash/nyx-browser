@@ -1,0 +1,99 @@
+name: Website validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "script.js"
+      - "style.css"
+      - "mobile.css"
+      - "mobile-site.js"
+      - "service-worker.js"
+      - "manifest.webmanifest"
+      - ".github/workflows/site-validation.yml"
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "script.js"
+      - "style.css"
+      - "mobile.css"
+      - "mobile-site.js"
+      - "service-worker.js"
+      - "manifest.webmanifest"
+      - ".github/workflows/site-validation.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate website scripts and responsive shell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript syntax
+        run: |
+          node --check script.js
+          node --check mobile-site.js
+          node --check service-worker.js
+      - name: Validate page structure, translations and PWA cache
+        run: |
+          python - <<'PY'
+          import json
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          root = Path(".")
+          html = (root / "index.html").read_text(encoding="utf-8")
+          js = (root / "script.js").read_text(encoding="utf-8")
+          css = (root / "mobile.css").read_text(encoding="utf-8")
+          sw = (root / "service-worker.js").read_text(encoding="utf-8")
+          manifest = json.loads((root / "manifest.webmanifest").read_text(encoding="utf-8"))
+
+          class PageParser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids = []
+                  self.scripts = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  if "id" in attrs:
+                      self.ids.append(attrs["id"])
+                  if tag == "script" and attrs.get("src"):
+                      self.scripts.append(attrs["src"])
+
+          parser = PageParser()
+          parser.feed(html)
+          required_ids = {
+              "nyx-demo", "demo-tabs", "demo-viewport", "demo-address",
+              "demo-status", "demo-sidebar", "demo-menu", "demo-address-form",
+              "language-toggle", "menu-toggle"
+          }
+          missing = required_ids - set(parser.ids)
+          assert not missing, f"Missing demo/site IDs: {sorted(missing)}"
+          duplicates = sorted({x for x in parser.ids if parser.ids.count(x) > 1})
+          assert not duplicates, f"Duplicate page IDs: {duplicates}"
+          for src in parser.scripts:
+              assert (root / src).is_file(), f"Missing script asset: {src}"
+
+          assert 'unknown-publisher warning.",' in js, "English download translation is malformed"
+          assert "Тестовую версию NYX для Windows 10/11 x64" in js
+          assert "Windows 10/11 x64 preview is available" in js
+          assert "const CACHE_NAME = \"nyx-site-shell-v3\";" in sw
+          for asset in [
+              "/", "/index.html", "/support.html", "/style.css", "/mobile.css",
+              "/script.js", "/mobile-site.js", "/manifest.webmanifest"
+          ]:
+              assert asset in sw, f"Missing PWA core asset: {asset}"
+          assert manifest.get("start_url") == "/"
+          assert manifest.get("scope") == "/"
+          assert "@media (max-width: 680px)" in css
+          assert ".demo-browser" in css and "user-select: text" in css
+          assert "prefers-reduced-motion" in css
+          print("Website structure, responsive overrides, translations and PWA assets validated.")
+          PY
