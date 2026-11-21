@@ -1,5 +1,5 @@
 /* Prevent decorative effects from creating a sideways page scroll at any viewport. */
-html, body { max-width: 100%; overflow-x: clip !important; }
+html, body { max-width: 100%; overflow-x: hidden !important; }
 
 /* Mobile-first finishing layer for the NYX project website */
 :root { color-scheme: dark; }
