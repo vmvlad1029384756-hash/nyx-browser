@@ -28,4 +28,4 @@ The CI debug APK is signed with the standard debug key. It is for testing only; 
 
 ## iPhone
 
-The Windows executable and Android APK do not run on iPhone. The website will be kept responsive, and an installable web companion can be used from Safari Share → Add to Home Screen. A full native iOS browser is a separate Swift/WKWebView project and requires its own build, device testing and Apple distribution setup.
+The Windows executable and Android APK do not run on iPhone. The informational website is being kept responsive for Safari. An installable iPhone companion is a separate PWA task and is not published yet. A full native iOS browser is a separate Swift/WKWebView project and requires its own build, device testing and Apple distribution setup.
