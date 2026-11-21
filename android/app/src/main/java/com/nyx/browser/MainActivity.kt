@@ -64,7 +64,9 @@ class MainActivity : Activity() {
         window.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         buildInterface()
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-        WebView.startSafeBrowsing(this) { }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            WebView.startSafeBrowsing(this) { }
+        }
         restoreSession()
     }
 
