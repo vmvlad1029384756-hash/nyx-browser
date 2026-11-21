@@ -1,0 +1,80 @@
+name: Publish mobile PWA companion
+
+on:
+  push:
+    branches: [feat/mobile-companion]
+    paths:
+      - ".github/workflows/publish-mobile-companion.yml"
+      - "NYX_Browser_1.0.0-dev.3.2_ThemeWidgets.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract mobile workspace from uploaded source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARCHIVE="NYX_Browser_1.0.0-dev.3.2_ThemeWidgets.zip"
+          test -f "$ARCHIVE"
+          mkdir -p "$RUNNER_TEMP/nyx-source"
+          unzip -q "$ARCHIVE" -d "$RUNNER_TEMP/nyx-source"
+          SOURCE="$RUNNER_TEMP/nyx-source/mobile-pwa"
+          test -f "$SOURCE/index.html"
+          test -f "$SOURCE/games.html"
+          test -f "$SOURCE/manifest.webmanifest"
+          mkdir -p mobile
+          cp -a "$SOURCE/." mobile/
+
+      - name: Isolate the mobile cache namespace
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("mobile/sw.js")
+          source = path.read_text(encoding="utf-8")
+          old = "keys.filter(function(k){return k!==CACHE})"
+          new = "keys.filter(function(k){return k.indexOf('nyx-mobile-')===0 && k!==CACHE})"
+          if old not in source:
+              raise SystemExit("Expected mobile cache cleanup code was not found")
+          path.write_text(source.replace(old, new), encoding="utf-8")
+          PY
+
+      - name: Validate mobile PWA files
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path("mobile")
+          manifest = json.loads((root / "manifest.webmanifest").read_text(encoding="utf-8"))
+          assert manifest["start_url"] == "./index.html"
+          assert manifest["scope"] == "./"
+          for icon in manifest["icons"]:
+              icon_path = root / icon["src"].removeprefix("./")
+              assert icon_path.is_file(), icon_path
+          assert "nyx-mobile-" in (root / "sw.js").read_text(encoding="utf-8")
+          assert (root / "games.html").is_file()
+          print("Mobile PWA structure and manifest validated.")
+          PY
+
+      - name: Commit extracted mobile workspace to this branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mobile
+          if git diff --cached --quiet; then
+            echo "Mobile companion is already up to date."
+            exit 0
+          fi
+          git commit -m "Publish NYX mobile workspace PWA"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
