@@ -57,12 +57,72 @@
       <div class="hero-visual" aria-label="NYX Browser interface illustration">
         <div class="orbit orbit-one"></div>
         <div class="orbit orbit-two"></div>
-        <div class="browser-preview">
-          <div class="preview-top">
-            <div class="window-dots"><i></i><i></i><i></i></div>
-            <div class="preview-tab">✦ NYX</div>
-            <div class="preview-controls">− □ ×</div>
-          </div>
+
+<div class="browser-preview" id="nyx-demo">
+  <div class="preview-top">
+    <div class="window-dots"><i></i><i></i><i></i></div>
+
+    <div class="preview-tabs">
+      <button class="preview-tab active" type="button" data-demo-tab="home">✦ NYX</button>
+      <button class="preview-tab" type="button" data-demo-tab="media">YouTube</button>
+      <button class="preview-tab" type="button" data-demo-tab="wiki">Wikipedia</button>
+    </div>
+
+    <div class="preview-controls">− □ ×</div>
+  </div>
+
+  <div class="preview-toolbar">
+    <button class="demo-control" id="demo-back" type="button" aria-label="Back">‹</button>
+    <button class="demo-control" id="demo-forward" type="button" aria-label="Forward">›</button>
+    <button class="demo-control" id="demo-refresh" type="button" aria-label="Refresh">↻</button>
+
+    <form class="address-bar" id="demo-address-form">
+      <span>⌕</span>
+      <input id="demo-address" type="text" placeholder="Search or enter address..." autocomplete="off">
+    </form>
+
+    <button class="demo-control" id="demo-bookmark" type="button" aria-label="Bookmark">☆</button>
+    <button class="demo-control" id="demo-menu" type="button" aria-label="More options">⋯</button>
+  </div>
+
+  <div class="preview-page" id="demo-page">
+    <div class="preview-logo">N<span>.</span></div>
+
+    <div class="preview-heading">Browse beyond<span>.</span></div>
+    <div class="preview-subtitle" id="demo-subtitle">Твой интернет начинается здесь.</div>
+
+    <form class="preview-search" id="demo-search-form">
+      <span>⌕</span>
+      <input id="demo-search" type="text" placeholder="Поиск в интернете..." autocomplete="off">
+      <button type="submit" aria-label="Search">↗</button>
+    </form>
+
+    <div class="preview-shortcuts">
+      <button type="button" data-demo-url="https://www.youtube.com">
+        <b class="shortcut-youtube">Y</b>
+        <small>YouTube</small>
+      </button>
+
+      <button type="button" data-demo-url="https://www.google.com">
+        <b class="shortcut-google">G</b>
+        <small>Google</small>
+      </button>
+
+      <button type="button" data-demo-url="https://www.wikipedia.org">
+        <b class="shortcut-wiki">W</b>
+        <small>Wikipedia</small>
+      </button>
+
+      <button type="button" id="demo-add-site">
+        <b>＋</b>
+        <small>Добавить</small>
+      </button>
+    </div>
+
+    <div class="demo-status" id="demo-status">NYX готов к работе</div>
+  </div>
+</div>
+
           <div class="preview-toolbar">
             <span>‹</span><span>›</span><span>↻</span>
             <div class="address-bar"><span>⌕</span> Search the web...</div>
