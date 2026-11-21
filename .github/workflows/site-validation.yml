@@ -84,7 +84,7 @@ jobs:
           assert 'unknown-publisher warning.",' in js, "English download translation is malformed"
           assert "Тестовую версию NYX для Windows 10/11 x64" in js
           assert "Windows 10/11 x64 preview is available" in js
-          assert "const CACHE_NAME = \"nyx-site-shell-v3\";" in sw
+          assert "const CACHE_NAME = \"nyx-site-shell-v4\";" in sw
           for asset in [
               "/", "/index.html", "/support.html", "/style.css", "/mobile.css",
               "/script.js", "/mobile-site.js", "/manifest.webmanifest"
