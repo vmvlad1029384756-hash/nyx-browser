@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.nyx.browser"
-    compileSdk = 37
+    compileSdk = 36
     buildFeatures {
         buildConfig = true
     }
