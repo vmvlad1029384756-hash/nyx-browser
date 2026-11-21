@@ -2,6 +2,7 @@ name: Windows installer
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, closed]
     branches: [main]
     paths:
       - "NYX_Browser_1.0.0-dev.3.2_ThemeWidgets.zip"
@@ -22,6 +23,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || github.event.action != 'closed' || github.event.pull_request.merged == true
     name: Build NYX Setup.exe (Windows x64)
     runs-on: windows-2022
     steps:
