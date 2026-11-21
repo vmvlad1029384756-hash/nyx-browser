@@ -26,7 +26,6 @@ jobs:
         with:
           python-version: "3.13"
           architecture: "x64"
-          cache: "pip"
 
       - name: Extract desktop application source
         shell: pwsh
