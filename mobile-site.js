@@ -47,6 +47,7 @@
     });
     if (installButton) installButton.textContent = copy[language()].install;
     if (isStandalone()) setStatus("standalone");
+    else if (installPrompt && installButton && !installButton.hidden) setStatus("ready");
     else if (isIOS()) setStatus("ios");
     else setStatus("android");
   };
