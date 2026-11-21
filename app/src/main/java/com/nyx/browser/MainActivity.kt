@@ -387,7 +387,7 @@ class MainActivity : Activity() {
             }
         }
 
-        webView.setDownloadListener(DownloadListener { url, userAgent, contentDisposition, mimeType ->
+        webView.setDownloadListener(DownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
             startDownload(url, userAgent, contentDisposition, mimeType)
         })
     }
