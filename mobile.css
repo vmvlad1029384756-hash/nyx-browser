@@ -43,3 +43,23 @@ button, .btn { -webkit-tap-highlight-color: transparent; }
 @media (pointer: coarse) {
   .btn:hover, .feature-card:hover, .status-widget:hover { transform: none; }
 }
+
+.mobile-launch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin-top: 18px;
+  padding: 23px 25px;
+  border: 1px solid rgba(169,139,255,.25);
+  border-radius: 16px;
+  background: linear-gradient(120deg, rgba(169,139,255,.11), rgba(20,18,34,.82));
+}
+.mobile-launch-copy { min-width: 0; }
+.mobile-launch h3 { margin: 0 0 7px; font-size: 17px; color: var(--text); letter-spacing: -.02em; }
+.mobile-launch p { margin: 0; max-width: 660px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.mobile-launch .btn { flex: 0 0 auto; min-height: 44px; }
+@media (max-width: 680px) {
+  .mobile-launch { align-items: stretch; flex-direction: column; gap: 15px; padding: 19px; }
+  .mobile-launch .btn { width: 100%; justify-content: center; text-align: center; }
+}
