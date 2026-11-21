@@ -88,6 +88,9 @@ function setLanguage(language) {
 
 languageToggle.addEventListener("click", () => {
   setLanguage(currentLanguage === "ru" ? "en" : "ru");
+  if (typeof window.updateNyxDemoLanguage === "function") {
+    window.updateNyxDemoLanguage();
+}
 
   if (typeof window.nyxNotify === "function") {
     window.nyxNotify(
@@ -298,5 +301,245 @@ faqItems.forEach((item) => {
         }
 
         return dismiss;
+    };
+})();
+
+/* ==========================================
+   NYX — INTERACTIVE BROWSER DEMO
+   ========================================== */
+
+(function () {
+    const demo = document.getElementById("nyx-demo");
+    if (!demo) return;
+
+    const searchForm = document.getElementById("demo-search-form");
+    const searchInput = document.getElementById("demo-search");
+    const addressForm = document.getElementById("demo-address-form");
+    const addressInput = document.getElementById("demo-address");
+    const status = document.getElementById("demo-status");
+    const subtitle = document.getElementById("demo-subtitle");
+    const tabs = demo.querySelectorAll("[data-demo-tab]");
+
+    const pages = {
+        home: {
+            title: "Browse beyond.",
+            subtitle: "Твой интернет начинается здесь.",
+            status: "NYX готов к работе"
+        },
+        media: {
+            title: "Explore media.",
+            subtitle: "Открой мир видео и развлечений.",
+            status: "Демонстрационная вкладка YouTube"
+        },
+        wiki: {
+            title: "Discover knowledge.",
+            subtitle: "Исследуй мир знаний.",
+            status: "Демонстрационная вкладка Wikipedia"
+        }
+    };
+
+    const heading = demo.querySelector(".preview-heading");
+    let activeTab = "home";
+    let lastAddress = "";
+
+    function notify(message, type = "info") {
+        if (typeof window.nyxNotify === "function") {
+            window.nyxNotify(message, type);
+        }
+    }
+
+    function setStatus(message) {
+        status.textContent = message;
+    }
+
+    function navigateTo(value) {
+        const query = value.trim();
+
+        if (!query) {
+            notify(
+                currentLanguage === "ru"
+                    ? "Сначала введи поисковый запрос или адрес."
+                    : "Enter a search query or website address first.",
+                "error"
+            );
+            return;
+        }
+
+        let destination;
+
+        if (/^https?:\/\//i.test(query)) {
+            destination = query;
+        } else if (/^[\w-]+\.[a-z]{2,}(\/.*)?$/i.test(query)) {
+            destination = "https://" + query;
+        } else {
+            destination =
+                "https://www.google.com/search?q=" +
+                encodeURIComponent(query);
+        }
+
+        try {
+            const url = new URL(destination);
+
+            if (!["http:", "https:"].includes(url.protocol)) {
+                throw new Error("Unsupported protocol");
+            }
+
+            lastAddress = url.href;
+            addressInput.value = url.href;
+
+            setStatus(
+                currentLanguage === "ru"
+                    ? "Открываем страницу в новой вкладке..."
+                    : "Opening page in a new tab..."
+            );
+
+            window.open(url.href, "_blank", "noopener,noreferrer");
+        } catch {
+            notify(
+                currentLanguage === "ru"
+                    ? "Не удалось обработать этот адрес."
+                    : "Could not process this address.",
+                "error"
+            );
+        }
+    }
+
+    searchForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        navigateTo(searchInput.value);
+    });
+
+    addressForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        navigateTo(addressInput.value);
+    });
+
+    demo.querySelectorAll("[data-demo-url]").forEach((button) => {
+        button.addEventListener("click", () => {
+            navigateTo(button.dataset.demoUrl);
+        });
+    });
+
+    tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            activeTab = tab.dataset.demoTab;
+
+            tabs.forEach((item) => {
+                item.classList.toggle("active", item === tab);
+            });
+
+            const page = pages[activeTab];
+
+            heading.textContent = page.title;
+            subtitle.textContent = page.subtitle;
+            setStatus(page.status);
+
+            notify(
+                currentLanguage === "ru"
+                    ? "Демонстрационная вкладка переключена."
+                    : "Demo tab switched.",
+                "success"
+            );
+        });
+    });
+
+    document.getElementById("demo-add-site").addEventListener("click", () => {
+        const address = prompt(
+            currentLanguage === "ru"
+                ? "Введи адрес сайта:"
+                : "Enter a website address:"
+        );
+
+        if (address) navigateTo(address);
+    });
+
+    document.getElementById("demo-refresh").addEventListener("click", () => {
+        setStatus(
+            currentLanguage === "ru"
+                ? "Демонстрация обновлена."
+                : "Demo refreshed."
+        );
+
+        notify(
+            currentLanguage === "ru"
+                ? "Демонстрация обновлена."
+                : "Demo refreshed.",
+            "success"
+        );
+    });
+
+    document.getElementById("demo-back").addEventListener("click", () => {
+        notify(
+            currentLanguage === "ru"
+                ? "Это демонстрация: история переходов не сохраняется."
+                : "This is a demo: navigation history is not stored."
+        );
+    });
+
+    document.getElementById("demo-forward").addEventListener("click", () => {
+        notify(
+            currentLanguage === "ru"
+                ? "Это демонстрация: история переходов не сохраняется."
+                : "This is a demo: navigation history is not stored."
+        );
+    });
+
+    document.getElementById("demo-bookmark").addEventListener("click", () => {
+        notify(
+            currentLanguage === "ru"
+                ? "Закладки будут доступны в полноценном браузере NYX."
+                : "Bookmarks will be available in the full NYX browser."
+        );
+    });
+
+    document.getElementById("demo-menu").addEventListener("click", () => {
+        notify(
+            currentLanguage === "ru"
+                ? "Дополнительные инструменты NYX появятся в следующих обновлениях."
+                : "More NYX tools are coming in future updates."
+        );
+    });
+
+    window.updateNyxDemoLanguage = function () {
+        const isRussian = currentLanguage === "ru";
+
+        searchInput.placeholder = isRussian
+            ? "Поиск в интернете..."
+            : "Search the web...";
+
+        addressInput.placeholder = isRussian
+            ? "Поиск или адрес сайта..."
+            : "Search or enter address...";
+
+        if (activeTab === "home") {
+            subtitle.textContent = isRussian
+                ? "Твой интернет начинается здесь."
+                : "Your internet starts here.";
+
+            heading.textContent = "Browse beyond.";
+            setStatus(isRussian ? "NYX готов к работе" : "NYX is ready");
+        }
+
+        if (activeTab === "media") {
+            subtitle.textContent = isRussian
+                ? "Открой мир видео и развлечений."
+                : "Explore a world of video and entertainment.";
+
+            heading.textContent = "Explore media.";
+            setStatus(isRussian
+                ? "Демонстрационная вкладка YouTube"
+                : "YouTube demo tab");
+        }
+
+        if (activeTab === "wiki") {
+            subtitle.textContent = isRussian
+                ? "Исследуй мир знаний."
+                : "Explore the world of knowledge.";
+
+            heading.textContent = "Discover knowledge.";
+            setStatus(isRussian
+                ? "Демонстрационная вкладка Wikipedia"
+                : "Wikipedia demo tab");
+        }
     };
 })();
