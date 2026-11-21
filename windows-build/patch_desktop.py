@@ -125,14 +125,33 @@ def open_default_apps_settings() -> bool:
 '''
 
 TRANSPARENT_SVG = r'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#e9ddff"/>
-    <stop offset="0.38" stop-color="#a98bff"/>
-    <stop offset="0.72" stop-color="#7654df"/>
-    <stop offset="1" stop-color="#4c2bb7"/>
-  </linearGradient></defs>
-  <path d="M66 188V68h28l68 78V68h28v120h-27L94 108v80z" fill="url(#g)"/>
-  <circle cx="190" cy="64" r="10" fill="#e9ddff"/>
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#24202e"/><stop offset="0.55" stop-color="#100d1d"/><stop offset="1" stop-color="#080611"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d7a5ff"/><stop offset="0.5" stop-color="#8e4be9"/><stop offset="1" stop-color="#452080"/>
+    </linearGradient>
+    <linearGradient id="front" x1="0" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#eadcff"/><stop offset="0.28" stop-color="#b58af5"/><stop offset="0.62" stop-color="#8b42ef"/><stop offset="1" stop-color="#5420a8"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5e2a9e"/><stop offset="0.45" stop-color="#a75aff"/><stop offset="1" stop-color="#34135f"/>
+    </linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#9a42ff" stop-opacity=".34"/><stop offset="1" stop-color="#9a42ff" stop-opacity="0"/></radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="9"/></filter>
+  </defs>
+  <ellipse cx="128" cy="130" rx="116" ry="116" fill="url(#glow)" filter="url(#soft)"/>
+  <rect x="25" y="25" width="206" height="206" rx="27" fill="url(#tile)" stroke="url(#edge)" stroke-width="2.2"/>
+  <path d="M72 72H105V184H72Z" fill="url(#side)" stroke="#a65cff" stroke-opacity=".7"/>
+  <path d="M151 72H184V184H151Z" fill="url(#side)" stroke="#a65cff" stroke-opacity=".7"/>
+  <path d="M72 72H105L184 184H151Z" fill="url(#front)" stroke="#d8b5ff" stroke-opacity=".7"/>
+  <path d="M72 72L105 72L184 184L151 184Z" fill="none" stroke="#f0ddff" stroke-opacity=".45" stroke-width="1.5"/>
+  <path d="M72 72L105 72L151 118L151 151Z" fill="#e8d8ff" opacity=".14"/>
+  <path d="M151 72H184L151 105Z" fill="#e9d7ff" opacity=".45"/>
+  <path d="M72 151L105 118V184H72Z" fill="#5d2aa0" opacity=".48"/>
+  <path d="M151 184H184V151Z" fill="#3d176e" opacity=".42"/>
+  <path d="M72 72H105L184 184H151" fill="none" stroke="#e8caff" stroke-width="1.4" opacity=".8"/>
 </svg>
 '''
 
