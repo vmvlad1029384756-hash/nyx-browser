@@ -1,5 +1,5 @@
 #define AppName "NYX Browser"
-#define AppVersion "1.0.0-dev.3.4"
+#define AppVersion "1.0.0-dev.3.5"
 #define AppPublisher "NYX"
 #define AppExeName "NYX Browser.exe"
 
@@ -48,9 +48,9 @@ russian.UserDataNote=Профиль браузера, cookies, история и
 Name: "desktopicon"; Description: "{cm:DesktopIconTask}"; GroupDescription: "{cm:AdditionalTasks}"; Flags: unchecked
 
 [Dirs]
-Name: "{app}"; Permissions: users-modify
-Name: "{app}\UserData"; Permissions: users-modify
-Name: "{app}\UserData\NYX Browser"; Permissions: users-modify
+Name: "{app}"
+Name: "{app}\UserData"
+Name: "{app}\UserData\NYX Browser"
 
 [Files]
 Source: "..\dist\NYX Browser\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -90,34 +90,6 @@ begin
     Result := 'D:\Programs\NYX Browser'
   else
     Result := ExpandConstant('{localappdata}\Programs\NYX Browser');
-end;
-
-function NextButtonClick(CurPageID: Integer): Boolean;
-var
-  ProbeFile: string;
-begin
-  Result := True;
-  if CurPageID = wpSelectDir then
-  begin
-    if not ForceDirectories(WizardDirValue) then
-    begin
-      MsgBox('Не удалось создать выбранную папку установки:' + #13#10 +
-        WizardDirValue + #13#10#10 +
-        'Выбери другую папку или проверь доступ к диску.', mbError, MB_OK);
-      Result := False;
-      exit;
-    end;
-    ProbeFile := AddBackslash(WizardDirValue) + 'nyx-write-test.tmp';
-    if not SaveStringToFile(ProbeFile, 'NYX', False) then
-    begin
-      MsgBox('Windows запретила запись в выбранную папку:' + #13#10 +
-        WizardDirValue + #13#10#10 +
-        'Выбери другую папку или проверь защиту от программ-вымогателей и права доступа.', mbError, MB_OK);
-      Result := False;
-      exit;
-    end;
-    DeleteFile(ProbeFile);
-  end;
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
