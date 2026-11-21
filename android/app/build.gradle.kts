@@ -6,6 +6,9 @@ plugins {
 android {
     namespace = "com.nyx.browser"
     compileSdk = 37
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId = "com.nyx.browser"
         minSdk = 26
