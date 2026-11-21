@@ -27,7 +27,7 @@ $archiveVersion = (Get-Content -LiteralPath $versionFile -Raw).Trim()
 if ($archiveVersion -ne "1.0.0-dev.3.2") {
     throw "Unexpected desktop source archive version: $archiveVersion"
 }
-$sourceVersion = "1.0.0-dev.3.3"
+$sourceVersion = "1.0.0-dev.3.4"
 Set-Content -LiteralPath $versionFile -Value $sourceVersion -NoNewline -Encoding ascii
 $installerText = Get-Content -LiteralPath $issTemplate -Raw
 if ($installerText -notmatch '#define AppVersion "([^"]+)"') {

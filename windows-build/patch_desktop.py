@@ -236,7 +236,7 @@ DB_FILE = APP_DIR / 'nyx.db'
                         "from PySide6.QtWidgets import QApplication, QMessageBox\nfrom PySide6.QtCore import QTimer, QUrl\n", 1)
     main = main.replace("from nyx.core.storage import load_settings, init_db\n",
                         "from nyx.core.storage import load_settings, init_db\nfrom nyx.core.data_paths import DATA_LOCATION_WARNING\nfrom nyx.core.default_browser import register_default_browser\n", 1)
-    main = main.replace("1.0.0-dev.3.2", "1.0.0-dev.3.3")
+    main = main.replace("1.0.0-dev.3.2", "1.0.0-dev.3.4")
     old_start = """    window=MainWindow();window.show()
     sys.exit(app.exec())
 """
@@ -263,7 +263,7 @@ DB_FILE = APP_DIR / 'nyx.db'
     window = window_path.read_text(encoding="utf-8")
     window = window.replace("from nyx.core.password_vault import list_credentials, get_password\n",
                             "from nyx.core.password_vault import list_credentials, get_password\nfrom nyx.core.default_browser import register_default_browser, open_default_apps_settings\n", 1)
-    window = window.replace("1.0.0-dev.3.2", "1.0.0-dev.3.3")
+    window = window.replace("1.0.0-dev.3.2", "1.0.0-dev.3.4")
     old_toolbar = """        self.incognito_btn=self._button('◉','Новое окно инкогнито · Ctrl+Shift+N',self.open_incognito_window); self.incognito_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.incognito_btn)
         self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)
 """
@@ -335,7 +335,7 @@ if __name__ == "__main__":
     unittest.main()
 ''', encoding="utf-8")
 
-    (root / "VERSION.txt").write_text("1.0.0-dev.3.3\n", encoding="utf-8")
+    (root / "VERSION.txt").write_text("1.0.0-dev.3.4\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
