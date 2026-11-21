@@ -677,3 +677,115 @@ summary:focus-visible {
         transition: none;
     }
 }
+
+/* ==========================================
+   NYX — TOAST NOTIFICATIONS
+   ========================================== */
+
+.nyx-toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(360px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.nyx-toast {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 15px 16px;
+    border: 1px solid #a78bfa55;
+    border-radius: 15px;
+    background: rgba(18, 16, 28, .94);
+    color: #f5f3ff;
+    box-shadow: 0 15px 45px #0008, 0 0 25px #9875ff15;
+    backdrop-filter: blur(18px);
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateX(35px) scale(.97);
+    transition: opacity .3s ease, transform .3s ease;
+}
+
+.nyx-toast.is-visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+.nyx-toast.is-leaving {
+    opacity: 0;
+    transform: translateX(35px) scale(.97);
+}
+
+.nyx-toast-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: #9875ff20;
+    color: #b99aff;
+    font-size: 18px;
+}
+
+.nyx-toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.nyx-toast-title {
+    margin: 0 0 3px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.nyx-toast-message {
+    margin: 0;
+    color: #aaa5b8;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.nyx-toast-close {
+    border: 0;
+    background: transparent;
+    color: #aaa5b8;
+    cursor: pointer;
+    font-size: 19px;
+    padding: 4px;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.nyx-toast-close:hover {
+    color: white;
+    transform: scale(1.15);
+}
+
+.nyx-toast-success .nyx-toast-icon {
+    color: #4ade80;
+    background: #4ade8018;
+}
+
+.nyx-toast-error .nyx-toast-icon {
+    color: #fb7185;
+    background: #fb718518;
+}
+
+.nyx-toast-info .nyx-toast-icon {
+    color: #b99aff;
+    background: #9875ff20;
+}
+
+@media (max-width: 600px) {
+    .nyx-toast-container {
+        top: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+    }
+}
