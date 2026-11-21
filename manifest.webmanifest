@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "NYX Browser",
+  "short_name": "NYX",
+  "description": "The official NYX Browser project website",
+  "start_url": "/?source=homescreen",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#090811",
+  "theme_color": "#090811",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
