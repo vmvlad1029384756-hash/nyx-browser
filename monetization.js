@@ -7,7 +7,7 @@
  const config=window.NYX_ADS_CONFIG||{publisherId:"",slots:[]};
  const pub=String(config.publisherId||"").trim();
  const slots=Array.isArray(config.slots)?config.slots.filter(x=>x&&String(x.id||"").trim()):[];
- if(!/^ca-pub-\\d+$/.test(pub)||!slots.length)return;
+ if(!/^ca-pub-\d+$/.test(pub)||!slots.length)return;
  if(!window.__tcfapi)return; // fail closed: never request ads without the configured CMP
  let started=false;
  const start=()=>{
