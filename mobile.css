@@ -138,3 +138,8 @@ input, textarea, [contenteditable="true"], .demo-address-form input,
 @media (prefers-reduced-motion: reduce) {
   .demo-browser, .demo-browser:hover { transition: none !important; transform: none !important; }
 }
+
+@media (max-width: 1000px) {
+  html, body { max-width: 100%; overflow-x: clip !important; }
+  .ambient { display: none !important; }
+}
