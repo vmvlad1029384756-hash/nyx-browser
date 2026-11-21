@@ -1003,3 +1003,72 @@ summary:focus-visible {
         padding: 7px 4px;
     }
 }
+
+/* ==========================================
+   NYX — LARGE BROWSER DEMO LAYOUT
+   ========================================== */
+
+.hero {
+    align-items: center;
+}
+
+.hero-visual {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 0;
+}
+
+.browser-preview {
+    width: min(100%, 760px);
+    min-height: 470px;
+    position: relative;
+    z-index: 2;
+    transform: none;
+    overflow: hidden;
+}
+
+.preview-page {
+    min-height: 390px;
+    padding: 38px 24px;
+}
+
+.preview-heading {
+    font-size: clamp(25px, 4vw, 38px);
+}
+
+.preview-search {
+    width: min(440px, 90%);
+}
+
+.preview-shortcuts {
+    justify-content: center;
+    gap: 15px;
+}
+
+@media (max-width: 900px) {
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-visual {
+        margin-top: 20px;
+    }
+
+    .browser-preview {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .browser-preview {
+        min-height: 390px;
+    }
+
+    .preview-page {
+        min-height: 310px;
+        padding: 30px 12px;
+    }
+}
