@@ -100,6 +100,7 @@ input, textarea, [contenteditable="true"], .demo-address-form input,
   .hero-art { overflow: visible; }
 }
 @media (max-width: 680px) {
+  .ambient { display: none !important; }
   .hero-art { padding: 22px 0 18px; overflow: hidden; border-radius: 16px; }
   .orbit-one, .orbit-two { display: none; }
   .demo-browser, .demo-browser:hover { transform: none !important; border-radius: 12px; }
