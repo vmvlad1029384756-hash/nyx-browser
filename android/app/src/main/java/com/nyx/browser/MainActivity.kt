@@ -10,10 +10,12 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Build
 import android.os.Environment
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
 import android.webkit.CookieManager
 import android.webkit.DownloadListener
@@ -54,8 +56,11 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.statusBarColor = Color.rgb(9, 8, 17)
-        window.navigationBarColor = Color.rgb(9, 8, 17)
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        }
         window.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         buildInterface()
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
@@ -67,6 +72,20 @@ class MainActivity : Activity() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(Color.rgb(9, 8, 17))
+            setOnApplyWindowInsetsListener { view, insets ->
+                val topInset: Int
+                val bottomInset: Int
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    val bars = insets.getInsets(WindowInsets.Type.systemBars())
+                    topInset = bars.top
+                    bottomInset = bars.bottom
+                } else {
+                    topInset = insets.systemWindowInsetTop
+                    bottomInset = insets.systemWindowInsetBottom
+                }
+                view.setPadding(0, topInset, 0, bottomInset)
+                insets
+            }
         }
         val toolbar = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
