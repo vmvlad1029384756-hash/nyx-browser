@@ -23,7 +23,12 @@ $issTemplate = Join-Path $repoRoot "windows-build\NYX_Browser.iss"
 if (-not (Test-Path $versionFile)) { throw "VERSION.txt is missing from source archive." }
 if (-not (Test-Path $issTemplate)) { throw "Installer script is missing: $issTemplate" }
 
-$sourceVersion = (Get-Content -LiteralPath $versionFile -Raw).Trim()
+$archiveVersion = (Get-Content -LiteralPath $versionFile -Raw).Trim()
+if ($archiveVersion -ne "1.0.0-dev.3.2") {
+    throw "Unexpected desktop source archive version: $archiveVersion"
+}
+$sourceVersion = "1.0.0-dev.3.3"
+Set-Content -LiteralPath $versionFile -Value $sourceVersion -NoNewline -Encoding ascii
 $installerText = Get-Content -LiteralPath $issTemplate -Raw
 if ($installerText -notmatch '#define AppVersion "([^"]+)"') {
     throw "Could not read AppVersion from the Inno Setup script."
@@ -63,6 +68,20 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "pip upgrade failed." }
     & $python -m pip install --no-cache-dir -r requirements-build.txt
     if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed." }
+
+    Write-Host "[NYX] Applying drive, default-browser and transparent-icon support..."
+    $patcher = Join-Path $repoRoot "windows-build\patch_desktop.py"
+    if (-not (Test-Path $patcher)) { throw "Desktop patcher is missing: $patcher" }
+    $previousQtPlatform = $env:QT_QPA_PLATFORM
+    $env:QT_QPA_PLATFORM = "offscreen"
+    try {
+        & $python $patcher $sourceRoot
+        if ($LASTEXITCODE -ne 0) { throw "Desktop installer-options patch failed." }
+    }
+    finally {
+        if ($null -eq $previousQtPlatform) { Remove-Item Env:QT_QPA_PLATFORM -ErrorAction SilentlyContinue }
+        else { $env:QT_QPA_PLATFORM = $previousQtPlatform }
+    }
 
     Write-Host "[NYX] Running regression tests..."
     & $python -m unittest discover -s tests -v
