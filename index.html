@@ -1,9 +1,15 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090811">
-<meta name="description" content="NYX Browser — независимый браузерный проект для Windows. Тёмный интерфейс, продуманный подход и развитие открыто.">
+<meta name="description" content="NYX Browser — проект браузера для Windows и мобильных устройств. Сайт можно установить на главный экран Android и iPhone.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NYX">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/nyx-192.png">
 <meta property="og:title" content="NYX Browser — Browse beyond.">
 <meta property="og:description" content="Твой интернет. Твои правила. Узнай больше о NYX Browser.">
 <meta property="og:type" content="website">
@@ -12,6 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="mobile.css">
 <link rel="stylesheet" href="monetization.css">
 </head>
 <body>
@@ -67,7 +74,7 @@
 <div class="section-head"><div><div class="eyebrow"><i></i><span data-i18n="dashEyebrow">NYX / ОБЗОР ПРОЕКТА</span></div><h2 data-i18n="dashTitle">Всё о проекте.<br><em>В одном месте.</em></h2></div><p data-i18n="dashLead">Краткий статус разработки, основные направления и то, над чем мы работаем.</p></div>
 <div class="status-widgets">
 <article class="status-widget"><span class="widget-icon">◉</span><span class="widget-label" data-i18n="widgetStatus">СТАТУС ПРОЕКТА</span><strong data-i18n="widgetStatusValue">В разработке</strong><small data-i18n="widgetStatusNote">Работа над браузером продолжается</small><i class="widget-indicator"></i></article>
-<article class="status-widget"><span class="widget-icon">▣</span><span class="widget-label" data-i18n="widgetPlatform">ПЛАТФОРМА</span><strong>Windows 10 / 11</strong><small data-i18n="widgetPlatformNote">Основная целевая платформа</small></article>
+<article class="status-widget"><span class="widget-icon">▣</span><span class="widget-label" data-i18n="widgetPlatform">ПЛАТФОРМА</span><strong>Windows · Android · iPhone</strong><small data-i18n="widgetPlatformNote">Сайт доступен на телефонах; мобильные приложения готовятся</small></article>
 <article class="status-widget"><span class="widget-icon">↓</span><span class="widget-label" data-i18n="widgetDownload">ЗАГРУЗКА</span><strong data-i18n="widgetDownloadValue">Пока недоступна</strong><small data-i18n="widgetDownloadNote">Установщик ещё не опубликован</small></article>
 <article class="status-widget"><span class="widget-icon">⌘</span><span class="widget-label" data-i18n="widgetSource">ИСХОДНЫЙ КОД</span><strong data-i18n="widgetSourceValue">Открытый репозиторий</strong><small><a href="https://github.com/vmvlad1029384756-hash/nyx-browser" target="_blank" rel="noopener" data-i18n="widgetSourceLink">Перейти на GitHub ↗</a></small></article></div>
 <div class="project-tabs-shell"><div class="project-tabs" role="tablist" aria-label="NYX project information"><button class="project-tab active" role="tab" aria-selected="true" data-project-tab="vision" data-i18n="projectTabVision">Концепция</button><button class="project-tab" role="tab" aria-selected="false" data-project-tab="interface" data-i18n="projectTabInterface">Интерфейс</button><button class="project-tab" role="tab" aria-selected="false" data-project-tab="roadmap" data-i18n="projectTabRoadmap">Планы развития</button></div>
@@ -105,19 +112,47 @@
 <div class="nyx-ad-slot" data-nyx-ad-anchor aria-label="Advertisement"></div>
 <section class="about-section" id="about"><div class="wrap about-layout"><div class="about-mark"><div class="big-n">N<span>.</span></div><div class="mark-caption">BROWSE BEYOND / EST. 2026</div></div><div class="about-copy"><div class="eyebrow"><i></i><span data-i18n="aboutEyebrow">О NYX BROWSER</span></div><h2 data-i18n="aboutTitle">Не просто окно<br>в интернет. <em>Твой стиль.</em></h2><p data-i18n="aboutText">NYX Browser — независимый проект браузера для Windows. Мы хотим создать приятную среду для повседневного просмотра сайтов: с цельным дизайном, понятным управлением и функциями, которые проходят путь от идеи до работающей реализации.</p><p class="about-small" data-i18n="aboutSmall">Проект находится в разработке. Состав функций, требования и доступность загрузки будут уточняться вместе с релизами.</p><a class="text-link" href="https://github.com/vmvlad1029384756-hash/nyx-browser" target="_blank" rel="noopener"><span data-i18n="aboutGithub">Следить за проектом на GitHub</span> ↗</a></div></div></section>
 <section class="section wrap updates-section" id="changelog"><div class="section-head"><div><div class="eyebrow"><i></i><span data-i18n="updatesEyebrow">ИСТОРИЯ ПРОЕКТА</span></div><h2 data-i18n="updatesTitle">Движение <em>вперёд.</em></h2></div><p data-i18n="updatesLead">Здесь будут публиковаться подтверждённые изменения сайта и браузера. Пока подробные заметки к релизам не опубликованы.</p></div><div class="update-panel"><div class="update-status"><span class="status-pill"><i></i><span data-i18n="statusDev">В разработке</span></span><span class="update-date">NYX BROWSER</span></div><h3 data-i18n="updateCurrent">Следующее обновление готовится</h3><p data-i18n="updateText">Подробный список изменений появится после подготовки и проверки соответствующего релиза. Мы не указываем вымышленные версии и даты.</p><a class="btn btn-outline" href="https://github.com/vmvlad1029384756-hash/nyx-browser" target="_blank" rel="noopener"><span data-i18n="viewGithub">Посмотреть GitHub</span><b>↗</b></a></div></section>
-<section class="download-section" id="download"><div class="wrap"><div class="download-panel"><div class="download-glow"></div><div class="eyebrow"><i></i><span data-i18n="downloadEyebrow">СКОРО</span></div><h2 data-i18n="downloadTitle">Твой следующий шаг<br><em>начинается здесь.</em></h2><p data-i18n="downloadText">Публичная загрузка установщика пока не опубликована. Мы добавим ссылку, системные требования и заметки к версии, когда релиз будет готов.</p><div class="download-actions"><span class="btn btn-disabled" aria-disabled="true"><span data-i18n="downloadButton">Загрузка пока недоступна</span><b>⌁</b></span><a class="btn btn-quiet" href="https://github.com/vmvlad1029384756-hash/nyx-browser" target="_blank" rel="noopener"><span data-i18n="downloadGithub">Открыть GitHub</span> ↗</a></div><div class="download-meta"><span>WINDOWS</span><span>•</span><span data-i18n="downloadStatus">Установщик ещё не опубликован</span></div></div></div></section>
+<section class="download-section" id="download"><div class="wrap"><div class="download-panel"><div class="download-glow"></div><div class="eyebrow"><i></i><span data-i18n="downloadEyebrow">СКОРО</span></div><h2 data-i18n="downloadTitle">Твой следующий шаг<br><em>начинается здесь.</em></h2><p data-i18n="downloadText">Установщик NYX для Windows ещё не опубликован. Сайт уже можно добавить на главный экран телефона; отдельные мобильные приложения появятся после сборки и проверки.</p><div class="download-actions"><span class="btn btn-disabled" aria-disabled="true"><span data-i18n="downloadButton">Загрузка пока недоступна</span><b>⌁</b></span><a class="btn btn-quiet" href="https://github.com/vmvlad1029384756-hash/nyx-browser" target="_blank" rel="noopener"><span data-i18n="downloadGithub">Открыть GitHub</span> ↗</a></div><div class="download-meta"><span>WINDOWS</span><span>•</span><span data-i18n="downloadStatus">Установщик ещё не опубликован</span></div></div></div></section>
+<section class="mobile-install-section section wrap" id="mobile" aria-labelledby="mobile-install-title">
+  <div class="mobile-install-heading">
+    <div class="eyebrow"><i></i><span data-mobile-ru="NYX / МОБИЛЬНЫЙ ДОСТУП" data-mobile-en="NYX / MOBILE ACCESS">NYX / МОБИЛЬНЫЙ ДОСТУП</span></div>
+    <h2 id="mobile-install-title"><span data-mobile-ru="NYX на телефоне" data-mobile-en="NYX on your phone">NYX на телефоне</span><br><em data-mobile-ru="сайт уже можно установить." data-mobile-en="the website is ready to install.">сайт уже можно установить.</em></h2>
+    <p data-mobile-ru="Мобильная версия сайта адаптирована для сенсорного управления. Добавь её на главный экран — она будет открываться в отдельном окне. Это веб-версия сайта, а не нативный мобильный браузер." data-mobile-en="The website is adapted for touch screens. Add it to your home screen to open it in its own window. This is the website as a web app, not the native mobile browser.">Мобильная версия сайта адаптирована для сенсорного управления. Добавь её на главный экран — она будет открываться в отдельном окне. Это веб-версия сайта, а не нативный мобильный браузер.</p>
+  </div>
+  <div class="mobile-install-grid">
+    <article class="mobile-install-card">
+      <span class="mobile-install-icon" aria-hidden="true">◈</span>
+      <h3>Android</h3>
+      <p data-mobile-ru="Открой сайт в Chrome. В меню браузера выбери «Установить приложение» или «Добавить на главный экран». Если появится кнопка установки ниже, можно воспользоваться ею." data-mobile-en="Open the website in Chrome. In the browser menu, choose Install app or Add to Home screen. If the install button appears below, you can use it.">Открой сайт в Chrome. В меню браузера выбери «Установить приложение» или «Добавить на главный экран». Если появится кнопка установки ниже, можно воспользоваться ею.</p>
+      <button class="btn btn-primary" id="pwa-install-button" type="button" hidden>Установить сайт NYX</button>
+      <p class="mobile-install-note" id="pwa-install-status" role="status" aria-live="polite">Открой меню Chrome (⋮) → «Установить приложение» или «Добавить на главный экран».</p>
+    </article>
+    <article class="mobile-install-card">
+      <span class="mobile-install-icon" aria-hidden="true">▣</span>
+      <h3>iPhone</h3>
+      <p data-mobile-ru="Открой сайт в Safari, нажми «Поделиться» и выбери «На экран Домой». Подтверди добавление — ярлык NYX появится рядом с приложениями." data-mobile-en="Open the website in Safari, tap Share and choose Add to Home Screen. Confirm, and the NYX shortcut will appear alongside your apps.">Открой сайт в Safari, нажми «Поделиться» и выбери «На экран Домой». Подтверди добавление — ярлык NYX появится рядом с приложениями.</p>
+      <span class="mobile-install-note" data-mobile-ru="На iPhone установка выполняется через меню Safari." data-mobile-en="On iPhone, installation is done through Safari's Share menu.">На iPhone установка выполняется через меню Safari.</span>
+    </article>
+    <article class="mobile-install-card mobile-install-card-muted">
+      <span class="mobile-install-icon" aria-hidden="true">✦</span>
+      <h3 data-mobile-ru="Полноценный браузер" data-mobile-en="Native browser apps">Полноценный браузер</h3>
+      <p data-mobile-ru="Отдельные приложения NYX для Android (APK) и iPhone (iOS) ещё не выпущены. Мы не предлагаем скачивать APK со сторонних сайтов. Ссылки появятся только после сборки и проверки официальных приложений." data-mobile-en="Separate NYX apps for Android (APK) and iPhone (iOS) have not been released yet. Do not download APKs from third-party websites. Official links will appear only after the apps are built and tested.">Отдельные приложения NYX для Android (APK) и iPhone (iOS) ещё не выпущены. Мы не предлагаем скачивать APK со сторонних сайтов. Ссылки появятся только после сборки и проверки официальных приложений.</p>
+    </article>
+  </div>
+</section>
 <div class="nyx-ad-slot" data-nyx-ad-anchor aria-label="Advertisement"></div>
 <section class="section wrap faq-section" id="faq"><div class="section-head"><div><div class="eyebrow"><i></i><span data-i18n="faqEyebrow">ВОПРОСЫ И ОТВЕТЫ</span></div><h2 data-i18n="faqTitle">Есть вопросы?</h2></div><p data-i18n="faqLead">Коротко о текущем состоянии проекта.</p></div><div class="faq-list">
 <details class="faq-item"><summary data-i18n="q1">Что такое NYX Browser?<span>＋</span></summary><p data-i18n="a1">NYX Browser — независимый браузерный проект, ориентированный прежде всего на Windows и развитие удобного тёмного интерфейса.</p></details>
 <details class="faq-item"><summary data-i18n="q2">Где скачать браузер?<span>＋</span></summary><p data-i18n="a2">Публичная ссылка на установщик пока не опубликована. Когда сборка будет готова, здесь появятся прямая ссылка, версия и системные требования.</p></details>
 <details class="faq-item"><summary data-i18n="q3">Какие функции уже доступны?<span>＋</span></summary><p data-i18n="a3">Состав возможностей зависит от конкретной сборки. Этот сайт не считает функции готовыми только потому, что они запланированы. Проверяй описание и заметки к релизу.</p></details>
-<details class="faq-item"><summary data-i18n="q4">Поддерживаются ли macOS, Linux или телефон?<span>＋</span></summary><p data-i18n="a4">Основная целевая платформа текущего проекта — Windows. Другие платформы не заявлены как готовые релизы.</p></details>
+<details class="faq-item"><summary data-i18n="q4">Поддерживаются ли macOS, Linux или телефон?<span>＋</span></summary><p data-i18n="a4">Сайт NYX адаптирован для телефонов и может устанавливаться как веб-приложение. Отдельные приложения для Android и iPhone пока не выпущены.</p></details>
 <details class="faq-item"><summary data-i18n="q5">Как сообщить об ошибке или предложить идею?<span>＋</span></summary><p data-i18n="a5">Открой репозиторий GitHub и создай issue с описанием проблемы или предложения.</p></details>
 </div></section>
 <section class="legal-section" id="privacy"><div class="wrap legal-inner"><div><div class="eyebrow"><i></i><span data-i18n="privacyEyebrow">ПРОЗРАЧНОСТЬ</span></div><h2 data-i18n="privacyTitle">Политика <em>приватности.</em></h2></div><div class="legal-copy"><p data-i18n="privacyP1">Этот сайт является информационной страницей проекта NYX Browser. На момент публикации сайт не содержит форм регистрации, личного кабинета или собственного механизма сбора паролей.</p><p data-i18n="privacyP2">Для загрузки шрифтов используется Google Fonts; при обращении к внешним сайтам, включая GitHub, действуют их собственные политики приватности. Хостинг Cloudflare Pages может обрабатывать технические данные запросов в рамках работы сервиса.</p><p data-i18n="privacyP3">Если на сайте появятся аналитика, формы или другие инструменты обработки данных, эта политика будет обновлена до их включения. Вопросы по сайту можно направить через GitHub Issues.</p><p>Рекламные блоки пока отключены. Если NYX подключит рекламную сеть, до запуска будут опубликованы сведения о поставщиках, технологиях cookies и способах управления согласием. Для персонализированной рекламы посетителям из ЕЭЗ, Великобритании и Швейцарии будет использоваться сертифицированная Google CMP с поддержкой IAB TCF.</p><a class="text-link" href="https://github.com/vmvlad1029384756-hash/nyx-browser/issues" target="_blank" rel="noopener"><span data-i18n="privacyContact">Открыть GitHub Issues</span> ↗</a></div></div></section>
 </main>
 <footer class="footer"><div class="wrap"><div class="footer-main"><a class="brand" href="#home"><span class="brand-icon">N</span><span>NYX<span class="brand-thin"> BROWSER</span></span></a><p data-i18n="footerLine">Твой интернет. Твои правила.</p><div class="footer-links"><a href="#features" data-i18n="navFeatures">Возможности</a><a href="#changelog" data-i18n="navUpdates">Обновления</a><a href="#privacy" data-i18n="footerPrivacy">Приватность</a><a href="support.html" data-i18n="footerSupport">Поддержать NYX</a><a href="https://github.com/vmvlad1029384756-hash/nyx-browser/issues" target="_blank" rel="noopener">GitHub ↗</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> NYX Browser</span><span data-i18n="footerNote">Независимый проект. В разработке.</span><a href="#home" data-i18n="backTop">Наверх ↑</a></div></div></footer>
 <script src="script.js"></script>
+<script src="mobile-site.js"></script>
 <script src="ads-config.js"></script>
 <script src="monetization.js"></script>
 </body></html>

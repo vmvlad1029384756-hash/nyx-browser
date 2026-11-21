@@ -1,13 +1,19 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090811">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NYX">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/nyx-192.png">
 <meta name="description" content="Как поддержать развитие NYX Browser: обратная связь, участие в проекте и прозрачная информация о будущей монетизации.">
 <title>Поддержать NYX Browser</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="support.css">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="support.css">
 </head>
 <body>
 <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
@@ -58,4 +64,5 @@
 <script>
 (()=>{const btn=document.getElementById('lang');let lang='ru';const apply=()=>{document.documentElement.lang=lang;document.querySelectorAll('[data-ru][data-en]').forEach(el=>{el.innerHTML=el.dataset[lang]});btn.textContent=lang==='ru'?'EN':'RU'};btn.addEventListener('click',()=>{lang=lang==='ru'?'en':'ru';apply()});document.getElementById('year').textContent=new Date().getFullYear();})();
 </script>
+<script src="mobile-site.js"></script>
 </body></html>

@@ -1,0 +1,45 @@
+/* Mobile-first finishing layer for the NYX project website */
+:root { color-scheme: dark; }
+html { -webkit-text-size-adjust: 100%; }
+body { min-width: 320px; }
+a, button, input, summary { touch-action: manipulation; }
+button, .btn { -webkit-tap-highlight-color: transparent; }
+.mobile-install-section { padding-top: 86px; padding-bottom: 100px; }
+.mobile-install-heading { max-width: 700px; margin-bottom: 32px; }
+.mobile-install-heading h2 { margin: 16px 0 12px; font-size: clamp(34px, 4.5vw, 52px); letter-spacing: -.05em; line-height: 1.12; }
+.mobile-install-heading h2 em { color: #b69aff; font-style: normal; }
+.mobile-install-heading p { max-width: 650px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.mobile-install-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.mobile-install-card { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 23px; border: 1px solid rgba(255,255,255,.09); border-radius: 15px; background: linear-gradient(145deg, #19152a, #100e19); box-shadow: 0 18px 45px #0003; }
+.mobile-install-card h3 { margin: 0; font-size: 18px; letter-spacing: -.025em; }
+.mobile-install-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.mobile-install-icon { width: 39px; height: 39px; display: grid; place-items: center; border: 1px solid #a98bff36; border-radius: 12px; color: #cbb8ff; background: #a98bff12; font-size: 19px; }
+.mobile-install-card .btn { margin-top: auto; min-height: 44px; }
+.mobile-install-note { min-height: 22px; color: #b7a6e5 !important; font-size: 11px !important; }
+.mobile-install-card-muted { background: linear-gradient(145deg, #151321, #0e0c17); }
+.mobile-install-card [hidden] { display: none !important; }
+@media (max-width: 900px) {
+  .mobile-install-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mobile-install-card:last-child { grid-column: 1 / -1; }
+}
+@media (max-width: 680px) {
+  .site-header { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .hero { padding-top: 58px; }
+  .mobile-install-section { padding-top: 64px; padding-bottom: 74px; }
+  .mobile-install-grid { grid-template-columns: 1fr; gap: 11px; }
+  .mobile-install-card:last-child { grid-column: auto; }
+  .mobile-install-card { padding: 19px; }
+  .mobile-install-heading h2 { font-size: 36px; }
+  .mobile-install-heading p { font-size: 13px; }
+  .mobile-install-card .btn { width: 100%; }
+  .footer { padding-bottom: max(25px, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 360px) {
+  .brand { font-size: 13px; gap: 7px; }
+  .brand-icon { width: 29px; height: 29px; }
+  .header-actions .btn { padding-inline: 8px; }
+  .lang-switch { padding-inline: 7px; }
+}
+@media (pointer: coarse) {
+  .btn:hover, .feature-card:hover, .status-widget:hover { transform: none; }
+}
