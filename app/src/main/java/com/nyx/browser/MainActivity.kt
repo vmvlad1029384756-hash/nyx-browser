@@ -107,7 +107,6 @@ class MainActivity : Activity() {
             letterSpacing = 0.06f
             setPadding(dp(5), dp(7), dp(5), dp(7))
         }
-        val brandSpacer = View(this)
         val newTabTop = button("+", 40, 38)
         newTabTop.contentDescription = "Новая вкладка"
         newTabTop.setOnClickListener { createTab() }
@@ -215,8 +214,10 @@ class MainActivity : Activity() {
         val history = button("◷", 42, 42)
         val share = button("↗", 42, 42)
         home.setOnClickListener { showHome() }
-        bookmarks.setOnClickListener { showEntries(KEY_BOOKMARKS, "Закладки") }
+        bookmarks.setOnClickListener { addCurrentBookmark() }
+        bookmarks.setOnLongClickListener { showEntries(KEY_BOOKMARKS, "Закладки"); true }
         history.setOnClickListener { showEntries(KEY_HISTORY, "История") }
+        history.setOnLongClickListener { clearHistory(); true }
         share.setOnClickListener { shareCurrentPage() }
         bottom.addView(home, LinearLayout.LayoutParams(0, dp(42), 1f))
         bottom.addView(bookmarks, LinearLayout.LayoutParams(dp(42), dp(42)).apply {
@@ -309,7 +310,7 @@ class MainActivity : Activity() {
                     refreshTabs()
                     updateNavigationButtons()
                 }
-                if (tab.url.startsWith("https://") || tab.url.startsWith("http://")) {
+                if (tab.url != HOME_URL && (tab.url.startsWith("https://") || tab.url.startsWith("http://"))) {
                     saveEntry(KEY_HISTORY, BrowserEntry(tab.title, tab.url), 100)
                 }
             }
@@ -624,6 +625,21 @@ class MainActivity : Activity() {
             .show()
     }
 
+    private fun addCurrentBookmark() {
+        val tab = currentTab() ?: return
+        if (!tab.url.startsWith("https://") && !tab.url.startsWith("http://")) {
+            toast("Открой страницу, чтобы добавить её в закладки")
+            return
+        }
+        saveEntry(KEY_BOOKMARKS, BrowserEntry(tab.title, tab.url), 200)
+        toast("Добавлено в закладки")
+    }
+
+    private fun clearHistory() {
+        prefs.edit().remove(KEY_HISTORY).apply()
+        toast("История очищена")
+    }
+
     private fun shareCurrentPage() {
         val tab = currentTab() ?: return
         if (!tab.url.startsWith("https://") && !tab.url.startsWith("http://")) {
@@ -736,13 +752,13 @@ class MainActivity : Activity() {
         const val KEY_BOOKMARKS = "bookmarks"
         const val KEY_HISTORY = "history"
         const val HOME_URL = "https://nyx.local/"
-        const val C_BG = Color.rgb(9, 8, 17)
-        const val C_PANEL = Color.rgb(20, 18, 34)
-        const val C_LINE = Color.rgb(48, 42, 64)
-        const val C_TEXT = Color.rgb(245, 242, 255)
-        const val C_MUTED = Color.rgb(162, 155, 182)
-        const val C_ACCENT = Color.rgb(169, 139, 255)
-        const val C_ACCENT_DARK = Color.rgb(47, 35, 76)
+        val C_BG = Color.rgb(9, 8, 17)
+        val C_PANEL = Color.rgb(20, 18, 34)
+        val C_LINE = Color.rgb(48, 42, 64)
+        val C_TEXT = Color.rgb(245, 242, 255)
+        val C_MUTED = Color.rgb(162, 155, 182)
+        val C_ACCENT = Color.rgb(169, 139, 255)
+        val C_ACCENT_DARK = Color.rgb(47, 35, 76)
 
         val HOME_HTML = """
             <!doctype html><html lang="ru"><head>
