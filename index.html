@@ -55,7 +55,7 @@
       <button data-action="history">◷ <span data-demo-label="history">История</span></button>
       <button data-action="settings">⚙ <span data-demo-label="settings">Настройки</span></button>
     </div>
-    <div class="demo-workspace"><aside class="demo-sidebar" id="demo-sidebar"><div class="demo-side-brand"><span class="demo-side-logo">N</span><span>NYX SPACE</span></div><button class="demo-side-item active" data-page="home"><b>⌂</b><span data-demo-t="home">Главная</span></button><button class="demo-side-item" data-page="bookmarks"><b>☆</b><span data-demo-t="bookmarks">Закладки</span></button><button class="demo-side-item" data-page="history"><b>◷</b><span data-demo-t="history">История</span></button><button class="demo-side-item" data-page="downloads"><b>↓</b><span data-demo-t="downloads">Загрузки</span></button><button class="demo-side-item" data-page="extensions"><b>◈</b><span data-demo-t="extensions">Расширения</span></button><div class="demo-side-spacer"></div><button class="demo-side-item" data-page="settings"><b>⚙</b><span data-demo-t="settings">Настройки</span></button><div class="demo-side-controls"><button class="demo-side-dock" data-action="pin-sidebar" title="Закрепить панель" aria-label="Закрепить панель">⌖</button><button class="demo-side-dock" data-action="dock" title="Переместить панель" aria-label="Переместить панель">⇄</button></div></aside><div class="demo-viewport" id="demo-viewport" aria-live="polite"></div></div>
+    <div class="demo-workspace"><aside class="demo-sidebar" id="demo-sidebar"><div class="demo-side-brand"><span class="demo-side-logo">N</span><span>NYX SPACE</span></div><button class="demo-side-item active" data-page="home"><b>⌂</b><span data-demo-t="home">Главная</span></button><button class="demo-side-item" data-page="bookmarks"><b>☆</b><span data-demo-t="bookmarks">Закладки</span></button><button class="demo-side-item" data-page="history"><b>◷</b><span data-demo-t="history">История</span></button><button class="demo-side-item" data-page="downloads"><b>↓</b><span data-demo-t="downloads">Загрузки</span></button><button class="demo-side-item" data-page="extensions"><b>◈</b><span data-demo-t="extensions">Расширения</span></button><button class="demo-side-item demo-game-link" data-page="snake"><b>▦</b><span data-demo-t="snake">Змейка</span></button><div class="demo-side-spacer"></div><button class="demo-side-item" data-page="settings"><b>⚙</b><span data-demo-t="settings">Настройки</span></button><div class="demo-side-controls"><button class="demo-side-dock" data-action="pin-sidebar" title="Закрепить панель" aria-label="Закрепить панель">⌖</button><button class="demo-side-dock" data-action="dock" title="Переместить панель" aria-label="Переместить панель">⇄</button></div></aside><div class="demo-viewport" id="demo-viewport" aria-live="polite"></div></div>
     <div class="demo-statusbar"><span class="demo-status-dot"></span><span id="demo-status">NYX готов к работе</span><span class="demo-zoom">100%</span></div>
   </div>
   
@@ -72,13 +72,32 @@
 <div class="project-tabs-shell"><div class="project-tabs" role="tablist" aria-label="NYX project information"><button class="project-tab active" role="tab" aria-selected="true" data-project-tab="vision" data-i18n="projectTabVision">Концепция</button><button class="project-tab" role="tab" aria-selected="false" data-project-tab="interface" data-i18n="projectTabInterface">Интерфейс</button><button class="project-tab" role="tab" aria-selected="false" data-project-tab="roadmap" data-i18n="projectTabRoadmap">Планы развития</button></div>
 <div class="project-tab-panel" id="project-tab-panel" role="tabpanel"><div class="project-tab-copy"><span class="card-index" id="project-tab-kicker">01 / VISION</span><h3 id="project-tab-title" data-i18n="projectVisionTitle">Браузер, который ощущается цельным.</h3><p id="project-tab-text" data-i18n="projectVisionText">NYX задуман как единая среда: интерфейс, навигация и инструменты должны выглядеть и работать согласованно. Главный приоритет — качество повседневного опыта.</p></div><div class="project-tab-visual"><div class="visual-orbit"></div><div class="visual-mark">N<span>.</span></div><div class="visual-caption" id="project-tab-caption">BROWSE BEYOND</div></div></div></div>
 </section>
-<section class="section wrap" id="features">
-  <div class="section-head"><div><div class="eyebrow"><i></i><span data-i18n="featuresEyebrow">ИДЕЯ И НАПРАВЛЕНИЕ</span></div><h2 data-i18n="featuresTitle">Больше внимания<br><em>тому, что важно.</em></h2></div><p data-i18n="featuresLead">Рассказываем о принципах проекта честно: без обещаний функций, которые ещё не готовы.</p></div>
+<section class="section wrap direction-section" id="features">
+  <div class="direction-hero">
+    <div class="direction-copy">
+      <div class="eyebrow"><i></i><span data-i18n="featuresEyebrow">ИДЕЯ И НАПРАВЛЕНИЕ</span></div>
+      <h2 data-i18n="featuresTitle">Больше внимания<br><em>тому, что важно.</em></h2>
+      <p data-i18n="featuresLead">Рассказываем о принципах проекта честно: без обещаний функций, которые ещё не готовы.</p>
+      <div class="direction-foot"><span class="direction-pulse"></span><span>DESIGN · EXPERIENCE · DEVELOPMENT</span></div>
+    </div>
+    <div class="direction-visual" aria-label="NYX design principles">
+      <div class="direction-rings"><i></i><i></i><i></i></div>
+      <div class="direction-console">
+        <div class="console-top"><span>NYX / PRINCIPLES</span><b>01—04</b></div>
+        <div class="console-line"><b>01</b><span>DESIGN LANGUAGE</span><i style="--bar:92%"></i></div>
+        <div class="console-line"><b>02</b><span>DAILY EXPERIENCE</span><i style="--bar:78%"></i></div>
+        <div class="console-line"><b>03</b><span>QUALITY FIRST</span><i style="--bar:86%"></i></div>
+        <div class="console-line"><b>04</b><span>OPEN DEVELOPMENT</span><i style="--bar:100%"></i></div>
+        <div class="console-bottom"><span>BUILT WITH INTENTION</span><span class="console-live"><i></i> IN PROGRESS</span></div>
+      </div>
+      <div class="direction-orbit-mark">N<span>.</span></div>
+    </div>
+  </div>
   <div class="feature-grid">
-    <article class="feature-card feature-large"><div class="feature-symbol">◐</div><span class="card-index">01 / DESIGN</span><h3 data-i18n="f1Title">Тёмная эстетика</h3><p data-i18n="f1Text">Выразительный тёмный визуальный стиль, фиолетовые акценты и внимание к деталям интерфейса.</p><div class="card-orb"></div></article>
-    <article class="feature-card"><div class="feature-symbol">⌘</div><span class="card-index">02 / EXPERIENCE</span><h3 data-i18n="f2Title">Удобство каждый день</h3><p data-i18n="f2Text">Проект развивается вокруг понятной навигации и комфортного повседневного использования.</p></article>
-    <article class="feature-card"><div class="feature-symbol">⌁</div><span class="card-index">03 / DEVELOPMENT</span><h3 data-i18n="f3Title">Постепенное развитие</h3><p data-i18n="f3Text">Новые возможности появляются по мере разработки и проверки совместимости.</p></article>
-    <article class="feature-card feature-wide"><div class="feature-symbol">◈</div><span class="card-index">04 / TRANSPARENCY</span><h3 data-i18n="f4Title">Открытая история изменений</h3><p data-i18n="f4Text">Исходный код сайта и публичные изменения проекта доступны в GitHub. Статус функций не скрывается за рекламными обещаниями.</p><a class="text-link" href="https://github.com/vmvlad1029384756-hash/nyx-browser" target="_blank" rel="noopener" data-i18n="githubLink">Открыть репозиторий ↗</a></article>
+    <article class="feature-card feature-large"><div class="feature-card-top"><div class="feature-symbol">◐</div><span class="card-index">01 / DESIGN</span></div><h3 data-i18n="f1Title">Тёмная эстетика</h3><p data-i18n="f1Text">Выразительный тёмный визуальный стиль, фиолетовые акценты и внимание к деталям интерфейса.</p><div class="card-orb"></div><div class="feature-card-glint"></div></article>
+    <article class="feature-card"><div class="feature-card-top"><div class="feature-symbol">⌘</div><span class="card-index">02 / EXPERIENCE</span></div><h3 data-i18n="f2Title">Удобство каждый день</h3><p data-i18n="f2Text">Проект развивается вокруг понятной навигации и комфортного повседневного использования.</p><div class="feature-card-glint"></div></article>
+    <article class="feature-card"><div class="feature-card-top"><div class="feature-symbol">⌁</div><span class="card-index">03 / DEVELOPMENT</span></div><h3 data-i18n="f3Title">Постепенное развитие</h3><p data-i18n="f3Text">Новые возможности появляются по мере разработки и проверки совместимости.</p><div class="feature-card-glint"></div></article>
+    <article class="feature-card feature-wide"><div class="feature-card-top"><div class="feature-symbol">◈</div><span class="card-index">04 / TRANSPARENCY</span></div><h3 data-i18n="f4Title">Открытая история изменений</h3><p data-i18n="f4Text">Исходный код сайта и публичные изменения проекта доступны в GitHub. Статус функций не скрывается за рекламными обещаниями.</p><a class="text-link" href="https://github.com/vmvlad1029384756-hash/nyx-browser" target="_blank" rel="noopener" data-i18n="githubLink">Открыть репозиторий ↗</a><div class="feature-card-glint"></div></article>
   </div>
   <p class="section-note" data-i18n="featuresNote">Важно: этот сайт описывает проект и его направление. Наличие конкретной функции зависит от опубликованной версии браузера.</p>
 </section>
