@@ -32,6 +32,7 @@ input,textarea,[contenteditable="true"],.demo-address-form input{-webkit-user-se
 @media(prefers-reduced-motion:reduce){.demo-browser{transition:none}}
 
 /* NYX DEMO — polished, animated interactive browser workspace */
+:root{--demo-accent:#a98bff;--demo-accent-2:#7654df}
 body{font-family:"Inter",Arial,sans-serif}
 .brand{font-family:"Inter",Arial,sans-serif}
 .hero-art{min-width:0;isolation:isolate}
@@ -98,3 +99,22 @@ body{font-family:"Inter",Arial,sans-serif}
 @media(max-width:760px){.demo-browser{min-height:0}.demo-workspace{min-height:330px}.demo-sidebar{width:45px;padding:10px 6px}.demo-sidebar .demo-side-brand>span:last-child,.demo-sidebar .demo-side-item>span{display:none}.demo-sidebar .demo-side-item{justify-content:center;padding-inline:0}.demo-sidebar .demo-side-item b{font-size:15px}.demo-side-brand{justify-content:center;padding-inline:0}.demo-side-logo{width:27px;height:27px}.demo-viewport{min-height:330px;max-height:380px}.demo-home,.demo-page{min-height:330px}.demo-shortcuts{gap:7px}.demo-shortcut{padding-inline:5px}.demo-settings-grid{grid-template-columns:1fr}.demo-window-controls{display:none}}
 @media(max-width:430px){.demo-tab{min-width:65px;padding-inline:6px}.demo-toolbar{gap:2px;padding-inline:6px}.demo-icon-btn{width:26px}.demo-viewport{min-height:310px}.demo-home{padding:26px 9px 20px}.demo-home-title{font-size:21px}.demo-shortcuts{gap:2px}}
 @media(prefers-reduced-motion:reduce){.demo-browser,.demo-tab,.demo-icon-btn,.demo-side-item,.demo-shortcut,.demo-result,.demo-toast{animation:none!important;transition:none!important}.demo-home-logo{animation:none}}
+
+/* Theme-aware accent system for the interactive browser */
+#nyx-demo[data-theme="blue"] .demo-tab.active,#nyx-demo[data-theme="blue"] .demo-side-item.active{border-color:#72a7ff66;background:linear-gradient(110deg,#72a7ff2b,#416bd018);box-shadow:inset 2px 0 #72a7ff}
+#nyx-demo[data-theme="green"] .demo-tab.active,#nyx-demo[data-theme="green"] .demo-side-item.active{border-color:#75d6ae66;background:linear-gradient(110deg,#75d6ae2b,#329b7618);box-shadow:inset 2px 0 #75d6ae}
+#nyx-demo[data-theme="red"] .demo-tab.active,#nyx-demo[data-theme="red"] .demo-side-item.active{border-color:#ff829666;background:linear-gradient(110deg,#ff82962b,#c84c6818);box-shadow:inset 2px 0 #ff8296}
+#nyx-demo[data-theme="amber"] .demo-tab.active,#nyx-demo[data-theme="amber"] .demo-side-item.active{border-color:#f2c27b66;background:linear-gradient(110deg,#f2c27b2b,#bf854018);box-shadow:inset 2px 0 #f2c27b}
+#nyx-demo[data-theme="blue"] .demo-search-form{border-color:#72a7ff66}#nyx-demo[data-theme="green"] .demo-search-form{border-color:#75d6ae66}#nyx-demo[data-theme="red"] .demo-search-form{border-color:#ff829666}#nyx-demo[data-theme="amber"] .demo-search-form{border-color:#f2c27b66}
+#nyx-demo .demo-toolbar .demo-icon-btn[draggable="true"]{cursor:grab}
+#nyx-demo .demo-toolbar .demo-icon-btn[draggable="true"]:active{cursor:grabbing}
+#nyx-demo .demo-home-hint{margin-top:22px;color:#80778f;font-size:8px;letter-spacing:.2px;opacity:.8}
+#nyx-demo .demo-result-row{display:flex;align-items:center;gap:7px}
+#nyx-demo .demo-result-row .demo-result{flex:1;min-width:0}
+#nyx-demo .demo-remove{width:30px;height:30px;border:1px solid #ffffff14;border-radius:8px;background:#ffffff06;color:#aa9db8;cursor:pointer;transition:all .2s}
+#nyx-demo .demo-remove:hover{background:#ff667822;color:#ff9ba7;transform:scale(1.06)}
+#nyx-demo .demo-zoom-controls{display:flex;align-items:center;gap:8px;margin-top:12px}
+#nyx-demo .demo-zoom-controls button{padding:7px 10px;border:1px solid #ffffff18;border-radius:8px;background:#ffffff08;color:#eee;font:10px Inter,sans-serif;cursor:pointer;transition:all .2s}
+#nyx-demo .demo-zoom-controls button:hover{border-color:#a98bff77;background:#a98bff1c;transform:translateY(-2px)}
+#nyx-demo .demo-page h4{margin:17px 0 7px;color:#cfc3e5;font-size:10px}
+#nyx-demo .demo-toast-close:hover{color:#fff}
