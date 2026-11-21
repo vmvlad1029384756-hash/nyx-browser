@@ -143,15 +143,16 @@ TRANSPARENT_SVG = r'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 2
   </defs>
   <ellipse cx="128" cy="130" rx="116" ry="116" fill="url(#glow)" filter="url(#soft)"/>
   <rect x="25" y="25" width="206" height="206" rx="27" fill="url(#tile)" stroke="url(#edge)" stroke-width="2.2"/>
-  <path d="M72 72H105V184H72Z" fill="url(#side)" stroke="#a65cff" stroke-opacity=".7"/>
-  <path d="M151 72H184V184H151Z" fill="url(#side)" stroke="#a65cff" stroke-opacity=".7"/>
-  <path d="M72 72H105L184 184H151Z" fill="url(#front)" stroke="#d8b5ff" stroke-opacity=".7"/>
-  <path d="M72 72L105 72L184 184L151 184Z" fill="none" stroke="#f0ddff" stroke-opacity=".45" stroke-width="1.5"/>
-  <path d="M72 72L105 72L151 118L151 151Z" fill="#e8d8ff" opacity=".14"/>
-  <path d="M151 72H184L151 105Z" fill="#e9d7ff" opacity=".45"/>
-  <path d="M72 151L105 118V184H72Z" fill="#5d2aa0" opacity=".48"/>
-  <path d="M151 184H184V151Z" fill="#3d176e" opacity=".42"/>
-  <path d="M72 72H105L184 184H151" fill="none" stroke="#e8caff" stroke-width="1.4" opacity=".8"/>
+  <!-- Faceted, beveled N redrawn from the supplied NYX avatar reference. -->
+  <path d="M70 70H104V186H70Z" fill="url(#side)" stroke="#b978ff" stroke-width="1.5"/>
+  <path d="M152 70H186V186H152Z" fill="url(#side)" stroke="#b978ff" stroke-width="1.5"/>
+  <path d="M70 70H104L186 186H152Z" fill="url(#front)" stroke="#e2c5ff" stroke-width="1.5"/>
+  <path d="M70 70L104 70L186 186L152 186Z" fill="none" stroke="#f2e3ff" stroke-opacity=".65" stroke-width="1.7"/>
+  <path d="M70 70H104L152 118V151Z" fill="#eadcff" opacity=".20"/>
+  <path d="M152 70H186L152 105Z" fill="#f0e3ff" opacity=".58"/>
+  <path d="M70 151L104 118V186H70Z" fill="#54218f" opacity=".55"/>
+  <path d="M152 186H186V151Z" fill="#35135f" opacity=".52"/>
+  <path d="M70 70H104L186 186H152" fill="none" stroke="#f0dfff" stroke-width="1.7" opacity=".9"/>
 </svg>
 '''
 
