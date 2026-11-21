@@ -100,3 +100,112 @@ jobs:
           assert "prefers-reduced-motion" in css
           print("Website structure, responsive overrides, translations and PWA assets validated.")
           PY
+
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local website
+        run: |
+          python3 -m http.server 4173 > /tmp/nyx-site-http.log 2>&1 &
+          echo $! > /tmp/nyx-site-http.pid
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/nyx-site-http.log
+          exit 1
+      - name: Test browser demo and responsive layouts
+        run: |
+          node <<'JS'
+          const { chromium } = require("playwright");
+
+          const viewports = [
+            { width: 320, height: 740, mobile: true },
+            { width: 360, height: 780, mobile: true },
+            { width: 390, height: 844, mobile: true },
+            { width: 430, height: 900, mobile: true },
+            { width: 768, height: 1024, mobile: false },
+            { width: 1024, height: 768, mobile: false },
+            { width: 1440, height: 900, mobile: false }
+          ];
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            try {
+              for (const viewport of viewports) {
+                const context = await browser.newContext({
+                  viewport: { width: viewport.width, height: viewport.height },
+                  deviceScaleFactor: 1,
+                  isMobile: viewport.mobile,
+                  hasTouch: viewport.mobile
+                });
+                const page = await context.newPage();
+                const pageErrors = [];
+                page.on("pageerror", error => pageErrors.push(error.message));
+
+                await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+                await page.locator("#demo-viewport .demo-home").waitFor({ timeout: 15000 });
+
+                await page.locator("#demo-address").fill("example.com");
+                await page.locator("#demo-address-form").press("Enter");
+                await page.locator("#demo-viewport .demo-page h3").waitFor();
+                const destination = await page.locator("#demo-viewport .demo-page h3").innerText();
+                if (!destination.includes("example.com")) {
+                  throw new Error("Demo navigation failed at " + viewport.width + "px: " + destination);
+                }
+
+                await page.locator('#demo-sidebar [data-page="home"]').click();
+                await page.locator("#demo-viewport .demo-home").waitFor();
+                await page.locator(".demo-new-tab").click();
+                const tabCount = await page.locator("#demo-tabs .demo-tab").count();
+                if (tabCount !== 2) throw new Error("New tab did not open at " + viewport.width + "px");
+
+                await page.locator('button[data-action="menu"]').click();
+                if (!(await page.locator("#demo-menu").isVisible())) {
+                  throw new Error("Demo menu did not open at " + viewport.width + "px");
+                }
+
+                if (viewport.mobile) {
+                  await page.locator("#menu-toggle").click();
+                  const navOpen = await page.locator("#main-nav").evaluate(el => getComputedStyle(el).display !== "none");
+                  if (!navOpen) throw new Error("Mobile navigation did not open at " + viewport.width + "px");
+                }
+
+                await page.locator("#language-toggle").click();
+                const language = await page.locator("html").getAttribute("lang");
+                if (language !== "en") throw new Error("Language switch failed at " + viewport.width + "px");
+
+                const dimensions = await page.evaluate(() => {
+                  const demo = document.querySelector(".demo-browser").getBoundingClientRect();
+                  return {
+                    viewport: window.innerWidth,
+                    document: document.documentElement.scrollWidth,
+                    body: document.body.scrollWidth,
+                    demoLeft: demo.left,
+                    demoRight: demo.right
+                  };
+                });
+                if (dimensions.document > viewport.width + 1 || dimensions.body > viewport.width + 1) {
+                  throw new Error("Horizontal page overflow at " + viewport.width + "px: " + JSON.stringify(dimensions));
+                }
+                if (dimensions.demoLeft < -1 || dimensions.demoRight > viewport.width + 1) {
+                  throw new Error("Browser demo is clipped at " + viewport.width + "px: " + JSON.stringify(dimensions));
+                }
+                if (pageErrors.length) {
+                  throw new Error("Browser JavaScript error at " + viewport.width + "px: " + pageErrors.join("; "));
+                }
+
+                console.log("PASS " + viewport.width + "x" + viewport.height + ": demo, tabs, menu, language and layout");
+                await context.close();
+              }
+            } finally {
+              await browser.close();
+            }
+          })().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          JS
