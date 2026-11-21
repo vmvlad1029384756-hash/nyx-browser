@@ -139,7 +139,7 @@ jobs:
                 const context = await browser.newContext({
                   viewport: { width: viewport.width, height: viewport.height },
                   deviceScaleFactor: 1,
-                  isMobile: viewport.mobile,
+                  isMobile: false,
                   hasTouch: viewport.mobile
                 });
                 const page = await context.newPage();
