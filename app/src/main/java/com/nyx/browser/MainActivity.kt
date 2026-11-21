@@ -528,6 +528,16 @@ class MainActivity : Activity() {
         if (!::address.isInitialized) return
         val display = if (value == HOME_URL || value.startsWith("data:text/html")) "" else value
         address.setText(display, false)
+        val insecureHttp = value.startsWith("http://", ignoreCase = true)
+        address.setTextColor(if (insecureHttp) Color.rgb(255, 190, 112) else C_TEXT)
+        address.contentDescription = if (insecureHttp) {
+            "Незащищённое соединение HTTP"
+        } else if (value.startsWith("https://", ignoreCase = true)) {
+            "Защищённое соединение HTTPS"
+        } else {
+            "Поиск или адрес сайта"
+        }
+        address.background = rounded(C_PANEL, if (insecureHttp) Color.rgb(170, 94, 48) else C_LINE, 13)
     }
 
     private fun refreshSuggestions(query: String) {
@@ -714,7 +724,7 @@ class MainActivity : Activity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(STATE_URL, currentTab()?.url)
+        outState.putString(STATE_URL, currentTab()?.url?.takeIf { it != HOME_URL })
         super.onSaveInstanceState(outState)
     }
 
