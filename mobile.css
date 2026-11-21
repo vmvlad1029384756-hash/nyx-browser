@@ -154,3 +154,6 @@ input, textarea, [contenteditable="true"], .demo-address-form input,
   .hero-copy, .hero-art { min-width: 0; }
   .hero h1 { font-size: clamp(42px, 5vw, 58px); }
 }
+
+/* Ambient blobs extend beyond the viewport and are decorative only. */
+.ambient { display: none !important; }
