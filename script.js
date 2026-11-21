@@ -168,3 +168,96 @@ faqItems.forEach((item) => {
         }
     });
 });
+
+/* ==========================================
+   NYX — NOTIFICATION SYSTEM
+   ========================================== */
+
+(function () {
+    let container = document.querySelector(".nyx-toast-container");
+
+    if (!container) {
+        container = document.createElement("div");
+        container.className = "nyx-toast-container";
+        container.setAttribute("aria-live", "polite");
+        container.setAttribute("aria-atomic", "false");
+        document.body.appendChild(container);
+    }
+
+    const icons = {
+        success: "✓",
+        error: "!",
+        info: "✦"
+    };
+
+    const titles = {
+        success: "Готово!",
+        error: "Ошибка",
+        info: "NYX Browser"
+    };
+
+    window.nyxNotify = function (
+        message,
+        type = "info",
+        title = null,
+        duration = 3500
+    ) {
+        if (!["success", "error", "info"].includes(type)) {
+            type = "info";
+        }
+
+        const toast = document.createElement("div");
+        toast.className = `nyx-toast nyx-toast-${type}`;
+
+        const icon = document.createElement("div");
+        icon.className = "nyx-toast-icon";
+        icon.textContent = icons[type];
+
+        const content = document.createElement("div");
+        content.className = "nyx-toast-content";
+
+        const heading = document.createElement("p");
+        heading.className = "nyx-toast-title";
+        heading.textContent = title || titles[type];
+
+        const text = document.createElement("p");
+        text.className = "nyx-toast-message";
+        text.textContent = message;
+
+        const close = document.createElement("button");
+        close.className = "nyx-toast-close";
+        close.type = "button";
+        close.textContent = "×";
+        close.setAttribute("aria-label", "Закрыть уведомление");
+
+        content.append(heading, text);
+        toast.append(icon, content, close);
+        container.appendChild(toast);
+
+        let removed = false;
+
+        function dismiss() {
+            if (removed) return;
+            removed = true;
+
+            toast.classList.remove("is-visible");
+            toast.classList.add("is-leaving");
+
+            setTimeout(() => toast.remove(), 350);
+        }
+
+        close.addEventListener("click", dismiss);
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                toast.classList.add("is-visible");
+            });
+        });
+
+        if (duration > 0) {
+            setTimeout(dismiss, duration);
+        }
+
+        return dismiss;
+    };
+})();
