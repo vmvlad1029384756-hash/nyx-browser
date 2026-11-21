@@ -100,8 +100,8 @@ input, textarea, [contenteditable="true"], .demo-address-form input,
   .hero-art { overflow: visible; }
 }
 @media (max-width: 680px) {
-  .hero-art { padding: 22px 0 18px; }
-  .orbit-one, .orbit-two { opacity: .45; }
+  .hero-art { padding: 22px 0 18px; overflow: hidden; border-radius: 16px; }
+  .orbit-one, .orbit-two { display: none; }
   .demo-browser, .demo-browser:hover { transform: none !important; border-radius: 12px; }
   .demo-tabbar { gap: 6px; padding-inline: 8px; }
   .demo-window-controls { display: none; }
