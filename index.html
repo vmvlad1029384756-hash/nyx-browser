@@ -10,7 +10,7 @@
 <title>NYX Browser — Browse beyond.</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -32,15 +32,35 @@
     <div class="hero-actions"><a class="btn btn-primary" href="#about"><span data-i18n="heroPrimary">Познакомиться с NYX</span><b>↗</b></a><a class="btn btn-quiet" href="#features" data-i18n="heroSecondary">Изучить проект <span>↓</span></a></div>
     <div class="hero-foot"><span class="pulse"></span><span data-i18n="heroFoot">Разработка продолжается. Следи за обновлениями.</span></div>
   </div>
-  <div class="hero-art" aria-label="Декоративная иллюстрация интерфейса NYX Browser">
-    <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
-    <div class="browser-window">
-      <div class="window-top"><div class="traffic"><i></i><i></i><i></i></div><div class="fake-tab"><span class="mini-mark">N</span> New tab <b>×</b></div><div class="window-plus">＋</div></div>
-      <div class="window-tools"><span>‹</span><span>›</span><span>↻</span><div class="fake-address"><span>⌕</span> Search or enter address</div><span>☆</span><span>⋯</span></div>
-      <div class="window-content"><div class="mock-logo">N<span>.</span></div><div class="mock-title">Browse beyond<span>.</span></div><div class="mock-sub" data-i18n="mockSubtitle">Твой интернет начинается здесь.</div><div class="mock-search">⌕ <span data-i18n="mockSearch">Поиск в интернете...</span><b>↗</b></div><div class="mock-links"><div><b class="yt">▶</b><small>YouTube</small></div><div><b class="gg">G</b><small>Google</small></div><div><b class="wiki">W</b><small>Wikipedia</small></div><div><b>＋</b><small data-i18n="mockAdd">Добавить</small></div></div></div>
+  <div class="hero-art" id="nyx-demo" aria-label="Интерактивная демоверсия NYX Browser">
+  <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+  <div class="demo-browser">
+    <div class="demo-tabbar">
+      <div class="demo-window-dots"><i></i><i></i><i></i></div>
+      <div class="demo-tabs" id="demo-tabs"></div>
+      <button class="demo-icon-btn demo-new-tab" data-action="new-tab" aria-label="Новая вкладка" title="Новая вкладка">＋</button>
+      <span class="demo-window-controls">− □ ×</span>
     </div>
-    <div class="floating-chip chip-top"><span>✦</span><span data-i18n="chipOne">Тёмный стиль</span></div><div class="floating-chip chip-bottom"><span class="chip-dot"></span><span data-i18n="chipTwo">Создаётся для Windows</span></div>
+    <div class="demo-toolbar">
+      <button class="demo-icon-btn" data-action="back" aria-label="Назад" title="Назад">‹</button>
+      <button class="demo-icon-btn" data-action="forward" aria-label="Вперёд" title="Вперёд">›</button>
+      <button class="demo-icon-btn" data-action="reload" aria-label="Обновить" title="Обновить">↻</button>
+      <form class="demo-address-form" id="demo-address-form"><span>⌕</span><input id="demo-address" aria-label="Адрес или поисковый запрос" placeholder="Поиск или адрес сайта..." autocomplete="off"><button type="submit" aria-label="Перейти">↵</button></form>
+      <button class="demo-icon-btn" data-action="bookmark" aria-label="Добавить в закладки" title="Закладка">☆</button>
+      <button class="demo-icon-btn" data-action="menu" aria-label="Меню" title="Меню">⋯</button>
+    </div>
+    <div class="demo-menu" id="demo-menu" hidden>
+      <button data-action="new-tab">＋ <span data-demo-label="newTab">Новая вкладка</span></button>
+      <button data-action="bookmarks">☆ <span data-demo-label="bookmarks">Закладки</span></button>
+      <button data-action="history">◷ <span data-demo-label="history">История</span></button>
+      <button data-action="settings">⚙ <span data-demo-label="settings">Настройки</span></button>
+    </div>
+    <div class="demo-viewport" id="demo-viewport" aria-live="polite"></div>
+    <div class="demo-statusbar"><span class="demo-status-dot"></span><span id="demo-status">NYX готов к работе</span><span class="demo-zoom">100%</span></div>
   </div>
+  <div class="floating-chip chip-top"><span>✦</span><span data-i18n="chipOne">Тёмный стиль</span></div>
+  <div class="floating-chip chip-bottom"><span class="chip-dot"></span><span data-i18n="chipTwo">Создаётся для Windows</span></div>
+</div>
 </section>
 <div class="ticker"><div class="ticker-inner"><span>NYX BROWSER</span><b>✦</b><span>DARK BY DESIGN</span><b>✦</b><span>BROWSE BEYOND</span><b>✦</b><span>NYX BROWSER</span><b>✦</b><span>DARK BY DESIGN</span><b>✦</b></div></div>
 <section class="section wrap" id="features">
