@@ -16,3 +16,12 @@ The site is connected to Cloudflare Pages through this GitHub repository. A push
 
 ## Accuracy note
 The download button remains disabled until a real installer URL is published. The site intentionally does not claim that planned browser capabilities are already released.
+
+
+## Mobile application work
+
+The Android client lives in `android/` and is an early native WebView-based MVP. It is not included in the Windows ZIP. Android CI builds a debug APK for testing; it is not a public signed release. The informational website is responsive, but a separate installable iPhone PWA companion and a full native iOS browser are still planned work.
+
+## Automated Windows packaging
+
+The Windows workflow extracts the desktop source ZIP, runs its 18 regression tests, packages the app with PyInstaller, compiles the Inno Setup installer and uploads both the installer and portable bundle as temporary CI artifacts. Python is bundled in the packaged application, so end users do not need to install Python. The artifact is unsigned and is not a public release until clean-machine testing is complete.
