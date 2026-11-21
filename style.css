@@ -394,3 +394,223 @@ button { font: inherit; }
   .footer { width: calc(100% - 36px); }
   .footer-bottom { flex-direction: column; gap: 10px; }
 }
+
+/* ==========================================
+   NYX — INTERACTION & POLISH UPDATE
+   ========================================== */
+
+/* Не выделяем интерфейсные элементы */
+button,
+.button,
+.brand,
+.brand-mark,
+.nav,
+.language-button,
+.menu-toggle,
+.feature-icon,
+.feature-tag,
+.floating-card,
+.preview-top,
+.preview-toolbar,
+.preview-shortcuts,
+.ticker,
+.faq-item summary,
+.text-link {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Плавное поведение интерактивных элементов */
+a,
+button,
+.feature-card,
+.language-button,
+.menu-toggle,
+.faq-item summary,
+.brand,
+.text-link {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Красивая подсветка навигации */
+.nav a,
+.footer-bottom a {
+    transition:
+        color .25s ease,
+        text-shadow .25s ease;
+}
+
+.nav a:hover,
+.footer-bottom a:hover {
+    color: var(--accent);
+    text-shadow: 0 0 15px #a78bfa55;
+}
+
+/* Кнопки */
+.button,
+.language-button,
+.menu-toggle {
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease,
+        border-color .25s ease;
+}
+
+.button:active,
+.language-button:active,
+.menu-toggle:active {
+    transform: scale(.96);
+}
+
+.button-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.button-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        transparent 25%,
+        #ffffff45 50%,
+        transparent 75%
+    );
+    transform: translateX(-120%);
+    transition: transform .65s ease;
+    pointer-events: none;
+}
+
+.button-primary:hover::before {
+    transform: translateX(120%);
+}
+
+/* Логотип */
+.brand-mark {
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.brand:hover .brand-mark {
+    transform: rotate(-7deg) scale(1.08);
+    box-shadow: 0 0 32px #9875ff70;
+}
+
+/* Карточки возможностей */
+.feature-card {
+    transition:
+        transform .3s cubic-bezier(.2,.8,.2,1),
+        border-color .3s ease,
+        box-shadow .3s ease,
+        background .3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-7px);
+    border-color: #a78bfa88;
+    box-shadow:
+        0 18px 45px #0005,
+        0 0 25px #9875ff12;
+}
+
+.feature-icon {
+    transition:
+        transform .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: translateY(-3px) scale(1.08);
+    background: #a78bfa25;
+    box-shadow: 0 0 22px #9875ff25;
+}
+
+/* Иллюстрация браузера */
+.browser-preview {
+    transition:
+        transform .45s ease,
+        box-shadow .45s ease;
+}
+
+.browser-preview:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg)
+        translateY(-5px);
+    box-shadow:
+        0 40px 110px #000a,
+        0 0 85px #8b6af044;
+}
+
+/* Плавающие информационные карточки */
+.floating-card {
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+}
+
+.floating-card:hover {
+    transform: translateY(-5px);
+    border-color: #a78bfa70;
+    box-shadow: 0 15px 40px #0009, 0 0 20px #9875ff18;
+}
+
+/* Фоновое свечение */
+.ambient-one {
+    animation: ambient-drift-one 14s ease-in-out infinite alternate;
+}
+
+.ambient-two {
+    animation: ambient-drift-two 17s ease-in-out infinite alternate;
+}
+
+@keyframes ambient-drift-one {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(45px, 35px) scale(1.12); }
+}
+
+@keyframes ambient-drift-two {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(-35px, -30px) scale(1.1); }
+}
+
+/* FAQ */
+.faq-item {
+    transition: border-color .25s ease;
+}
+
+.faq-item:hover {
+    border-color: #a78bfa65;
+}
+
+.faq-item summary {
+    transition: color .25s ease;
+}
+
+.faq-item summary:hover {
+    color: var(--accent);
+}
+
+/* Явная подсветка клавиатурного фокуса */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+/* Уважаем настройки уменьшения анимации */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
