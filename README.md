@@ -30,3 +30,10 @@ The site is connected to Cloudflare Pages through this GitHub repository. A push
 
 ## Accuracy note
 The Windows download button remains disabled until a real installer URL is published. The website is installable on supported phones, but native mobile browser builds must not be described as released until they are built and tested.
+
+
+## Native mobile apps
+- The installable website is a PWA and is **not** the native browser app.
+- The Android native browser MVP is under active development in `app/`. See [ANDROID_APP.md](ANDROID_APP.md) for current features and limitations.
+- The first Android debug APK will be published as a temporary CI artifact only after a successful build. It is not a signed public release.
+- An iPhone-native build is a separate iOS project and is not included yet.
