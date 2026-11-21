@@ -172,3 +172,5 @@ body:after{content:"";position:fixed;z-index:-1;pointer-events:none;left:var(--p
 .faq-item[open]{background:linear-gradient(90deg,#a98bff0a,transparent);padding-inline:12px}.faq-item summary span{display:grid;place-items:center;width:27px;height:27px;border:1px solid #a98bff2b;border-radius:8px;background:#a98bff0a}
 .footer-bottom a{transition:color .25s,transform .25s}.footer-bottom a:hover{color:#e3d8ff;transform:translateY(-2px)}
 @media(prefers-reduced-motion:reduce){body:after,.ambient-a,.ambient-b,.section-head h2 em,.direction-copy h2 em{animation:none!important;transition:none!important}.site-scroll-progress{display:none}}
+
+.download-note{max-width:650px!important;margin:15px auto 0!important;color:#9b91ad!important;font-size:11px!important;line-height:1.7!important;text-align:center}
