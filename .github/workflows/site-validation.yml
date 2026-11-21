@@ -180,12 +180,17 @@ jobs:
 
                 const dimensions = await page.evaluate(() => {
                   const demo = document.querySelector(".demo-browser").getBoundingClientRect();
+                  const offenders = [...document.querySelectorAll("body *")].map(el => {
+                    const rect = el.getBoundingClientRect();
+                    return { tag: el.tagName, className: typeof el.className === "string" ? el.className : "", id: el.id, left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width) };
+                  }).filter(el => el.right > window.innerWidth + 1 || el.left < -1).slice(0, 12);
                   return {
                     viewport: window.innerWidth,
                     document: document.documentElement.scrollWidth,
                     body: document.body.scrollWidth,
                     demoLeft: demo.left,
-                    demoRight: demo.right
+                    demoRight: demo.right,
+                    offenders
                   };
                 });
                 if (dimensions.document > viewport.width + 1 || dimensions.body > viewport.width + 1) {
