@@ -63,3 +63,76 @@ button, .btn { -webkit-tap-highlight-color: transparent; }
   .mobile-launch { align-items: stretch; flex-direction: column; gap: 15px; padding: 19px; }
   .mobile-launch .btn { width: 100%; justify-content: center; text-align: center; }
 }
+
+
+/* Responsive NYX demo and predictable text selection */
+body, body * {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+}
+button, .btn, .menu-toggle, .lang-switch, .demo-tab, .demo-icon-btn,
+.demo-side-item, .demo-side-dock, .demo-shortcut, .demo-search-form button,
+.demo-address-form button, .project-tab, .demo-theme, .demo-switch,
+.demo-toast-close, .demo-tab-close, [draggable="true"], [data-snake-action] {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+input, textarea, [contenteditable="true"], .demo-address-form input,
+.demo-search-form input {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default !important;
+}
+.hero-art { min-width: 0; width: 100%; }
+.demo-browser {
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+}
+.demo-workspace, .demo-viewport, .demo-tabs { min-width: 0; }
+.demo-toolbar, .demo-tabbar { min-width: 0; }
+.demo-address-form { min-width: 0; flex: 1 1 auto; }
+.demo-address-form input { min-width: 0; }
+@media (max-width: 900px) {
+  .demo-browser, .demo-browser:hover { transform: none !important; }
+  .hero-art { overflow: visible; }
+}
+@media (max-width: 680px) {
+  .hero-art { padding: 22px 0 18px; }
+  .orbit-one, .orbit-two { opacity: .45; }
+  .demo-browser, .demo-browser:hover { transform: none !important; border-radius: 12px; }
+  .demo-tabbar { gap: 6px; padding-inline: 8px; }
+  .demo-window-controls { display: none; }
+  .demo-tab { max-width: 116px; padding: 7px 7px; gap: 5px; }
+  .demo-toolbar { gap: 2px; padding-inline: 6px; }
+  .demo-toolbar .demo-icon-btn { width: 25px; height: 29px; font-size: 15px; }
+  .demo-address-form { height: 29px; gap: 4px; padding-inline: 6px; }
+  .demo-address-form input { font-size: 11px; }
+  .demo-workspace { min-height: 300px; }
+  .demo-sidebar, .demo-sidebar.collapsed { width: 40px; padding: 10px 5px; }
+  .demo-sidebar.collapsed .demo-side-item { padding-inline: 0; }
+  .demo-side-item b { font-size: 14px; }
+  .demo-side-controls { gap: 3px; }
+  .demo-side-dock { width: 24px; height: 24px; }
+  .demo-viewport { min-height: 300px; max-height: 360px; }
+  .demo-home { min-height: 300px; padding: 28px 12px 20px; }
+  .demo-home-title { font-size: clamp(19px, 5.5vw, 24px); }
+  .demo-shortcuts { gap: clamp(10px, 4vw, 18px); }
+  .demo-page { padding: 20px 14px; }
+  .demo-settings-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 360px) {
+  .demo-tabbar { gap: 4px; padding-inline: 6px; }
+  .demo-window-dots { gap: 3px; }
+  .demo-window-dots i { width: 6px; height: 6px; }
+  .demo-tab { max-width: 94px; padding-inline: 5px; }
+  .demo-toolbar { gap: 1px; padding-inline: 4px; }
+  .demo-toolbar .demo-icon-btn { width: 23px; }
+  .demo-address-form { padding-inline: 4px; }
+  .demo-sidebar, .demo-sidebar.collapsed { width: 36px; padding-inline: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-browser, .demo-browser:hover { transition: none !important; transform: none !important; }
+}
