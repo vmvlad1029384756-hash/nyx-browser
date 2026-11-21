@@ -1,0 +1,139 @@
+name: Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "NYX_Browser_1.0.0-dev.3.2_ThemeWidgets.zip"
+      - ".github/workflows/windows-build.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows-x64:
+    name: Build Windows x64 installer
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out website and release inputs
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13 x64
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          architecture: "x64"
+          cache: "pip"
+
+      - name: Extract desktop application source
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:GITHUB_WORKSPACE "NYX_Browser_1.0.0-dev.3.2_ThemeWidgets.zip"
+          if (-not (Test-Path $archive)) {
+            throw "The NYX desktop source archive is missing: $archive"
+          }
+
+          $source = Join-Path $env:RUNNER_TEMP "nyx-source"
+          if (Test-Path $source) { Remove-Item $source -Recurse -Force }
+          New-Item -ItemType Directory -Path $source | Out-Null
+          Expand-Archive -LiteralPath $archive -DestinationPath $source -Force
+
+          foreach ($required in @("VERSION.txt", "requirements-build.txt", "NYX_Browser.spec", "setup/NYX_Browser.iss", "tests/test_release_integrity.py")) {
+            if (-not (Test-Path (Join-Path $source $required))) {
+              throw "Archive is incomplete. Missing: $required"
+            }
+          }
+
+          "NYX_SOURCE=$source" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+
+      - name: Run source integrity tests
+        shell: pwsh
+        run: |
+          Set-Location $env:NYX_SOURCE
+          python -m unittest discover -s tests -v
+
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          Set-Location $env:NYX_SOURCE
+          python -m pip install --upgrade pip
+          python -m pip install --no-cache-dir -r requirements-build.txt
+
+      - name: Build PyInstaller application bundle
+        shell: pwsh
+        run: |
+          Set-Location $env:NYX_SOURCE
+          python -m PyInstaller --noconfirm --clean NYX_Browser.spec
+
+          $exe = Join-Path $env:NYX_SOURCE "dist/NYX Browser/NYX Browser.exe"
+          if (-not (Test-Path $exe)) {
+            throw "PyInstaller did not produce NYX Browser.exe"
+          }
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          choco install innosetup --yes --no-progress
+          $compiler = @(
+            "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
+            "C:\Program Files\Inno Setup 6\ISCC.exe"
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+          if (-not $compiler) {
+            throw "Inno Setup compiler was not found after installation."
+          }
+          "NYX_ISCC=$compiler" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+
+      - name: Compile version-matched Setup.exe
+        shell: pwsh
+        run: |
+          Set-Location $env:NYX_SOURCE
+          $version = (Get-Content "VERSION.txt" -Raw).Trim()
+          if ($version -notmatch '^\d+\.\d+\.\d+[-A-Za-z0-9.]*$') {
+            throw "Unexpected version string in VERSION.txt: $version"
+          }
+
+          $issPath = Join-Path $env:NYX_SOURCE "setup/NYX_Browser.iss"
+          $iss = Get-Content $issPath -Raw
+          $iss = [regex]::Replace($iss, '(?m)^#define AppVersion ".*"$', ('#define AppVersion "' + $version + '"'))
+          $iss = [regex]::Replace($iss, '(?m)^OutputBaseFilename=.*$', ('OutputBaseFilename=NYX_Browser_' + $version + '_Setup_x64'))
+
+          if ($iss -notmatch ('#define AppVersion "' + [regex]::Escape($version) + '"')) {
+            throw "Could not synchronize the Inno Setup version."
+          }
+          [System.IO.File]::WriteAllText($issPath, $iss, [System.Text.UTF8Encoding]::new($false))
+
+          New-Item -ItemType Directory -Force -Path (Join-Path $env:NYX_SOURCE "installer") | Out-Null
+          & $env:NYX_ISCC $issPath
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup compilation failed with exit code $LASTEXITCODE."
+          }
+
+          $built = Get-ChildItem (Join-Path $env:NYX_SOURCE "installer") -Filter "*_Setup_x64.exe" | Select-Object -First 1
+          if (-not $built) { throw "The Setup.exe output was not found." }
+
+          $artifactDir = Join-Path $env:GITHUB_WORKSPACE "release-artifacts"
+          New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+          Copy-Item $built.FullName (Join-Path $artifactDir $built.Name)
+          Compress-Archive -Path (Join-Path $env:NYX_SOURCE "dist/NYX Browser/*") -DestinationPath (Join-Path $artifactDir ("NYX_Browser_" + $version + "_Portable_x64.zip")) -CompressionLevel Optimal
+
+          @(
+            "## Windows x64 build completed",
+            "",
+            "- Version: $version",
+            "- Installer: $($built.Name)",
+            "- Architecture: x64",
+            "- Python is bundled into the packaged application; end users do not need to install Python.",
+            "- This CI artifact is unsigned and still requires manual testing on clean Windows 10/11 devices."
+          ) | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
+      - name: Upload installer and portable build for QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: NYX-Windows-x64-${{ github.run_number }}
+          path: release-artifacts/*
+          if-no-files-found: error
+          retention-days: 14
