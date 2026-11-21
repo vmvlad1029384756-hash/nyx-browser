@@ -203,7 +203,7 @@ class MainActivity : Activity() {
             }
 
             override fun onPageStarted(view: WebView, url: String?, favicon: android.graphics.Bitmap?) {
-                tab.isHome = false
+                tab.isHome = (url == HOME_BASE_URL)
                 if (activeTab == tab) {
                     progress.visibility = View.VISIBLE
                     addressBar.setText(url.orEmpty())
