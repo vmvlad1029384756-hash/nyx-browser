@@ -789,3 +789,217 @@ summary:focus-visible {
         width: calc(100vw - 24px);
     }
 }
+
+/* ==========================================
+   NYX — INTERACTIVE BROWSER DEMO
+   ========================================== */
+
+.preview-tabs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.preview-tab {
+    min-width: 0;
+    max-width: 110px;
+    padding: 8px 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid transparent;
+    border-radius: 9px 9px 0 0;
+    background: transparent;
+    color: #918ba1;
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.preview-tab:hover {
+    color: white;
+    background: #ffffff0b;
+}
+
+.preview-tab.active {
+    color: white;
+    background: #9875ff20;
+    border-color: #9875ff45;
+}
+
+.demo-control {
+    display: grid;
+    place-items: center;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #aaa3bd;
+    font-size: 19px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.demo-control:hover {
+    background: #9875ff25;
+    color: white;
+}
+
+.address-bar {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    padding: 0 11px;
+    border: 1px solid #9875ff30;
+    border-radius: 9px;
+    background: #08070e;
+    color: #a78bfa;
+}
+
+.address-bar input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #eeeaf8;
+    font: inherit;
+    font-size: 11px;
+}
+
+.address-bar input::placeholder {
+    color: #777184;
+}
+
+.preview-search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(340px, 90%);
+    min-height: 45px;
+    margin: 27px auto 23px;
+    padding: 0 14px;
+    border: 1px solid #9875ff55;
+    border-radius: 13px;
+    background: #ffffff08;
+    color: #b99aff;
+    transition: .25s ease;
+}
+
+.preview-search:focus-within {
+    border-color: #b99aff;
+    box-shadow: 0 0 25px #9875ff25;
+}
+
+.preview-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: white;
+    font: inherit;
+    font-size: 12px;
+}
+
+.preview-search input::placeholder {
+    color: #827b91;
+}
+
+.preview-search button {
+    border: 0;
+    background: transparent;
+    color: #b99aff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.preview-shortcuts button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    min-width: 65px;
+    padding: 10px 8px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    background: transparent;
+    color: #aaa3bd;
+    cursor: pointer;
+    transition: .25s ease;
+}
+
+.preview-shortcuts button:hover {
+    transform: translateY(-5px);
+    border-color: #9875ff45;
+    background: #9875ff12;
+    color: white;
+}
+
+.preview-shortcuts button b {
+    display: grid;
+    place-items: center;
+    width: 39px;
+    height: 39px;
+    border-radius: 12px;
+    background: #9875ff20;
+    color: #c4adff;
+    font-size: 16px;
+}
+
+.preview-shortcuts button .shortcut-youtube {
+    background: #ff333320;
+    color: #ff7777;
+}
+
+.preview-shortcuts button .shortcut-google {
+    background: #4285f420;
+    color: #8ab4f8;
+}
+
+.preview-shortcuts button .shortcut-wiki {
+    background: #ffffff15;
+    color: #eee;
+}
+
+.preview-shortcuts button small {
+    font-size: 10px;
+}
+
+.demo-status {
+    margin-top: 22px;
+    color: #777184;
+    font-size: 10px;
+    letter-spacing: .3px;
+}
+
+@media (max-width: 600px) {
+    .preview-tab {
+        padding: 7px 6px;
+        font-size: 9px;
+    }
+
+    .preview-controls {
+        display: none;
+    }
+
+    .demo-control {
+        flex-basis: 23px;
+        width: 23px;
+    }
+
+    .preview-shortcuts button {
+        min-width: 54px;
+        padding: 7px 4px;
+    }
+}
