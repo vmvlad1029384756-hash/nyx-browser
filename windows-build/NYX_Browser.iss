@@ -1,5 +1,5 @@
 #define AppName "NYX Browser"
-#define AppVersion "1.0.0-dev.3.5"
+#define AppVersion "1.0.0-dev.3.6"
 #define AppPublisher "NYX"
 #define AppExeName "NYX Browser.exe"
 
@@ -9,7 +9,7 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
 AppPublisher={#AppPublisher}
-DefaultDirName={code:DefaultNYXDir}
+DefaultDirName={autopf}\NYX Browser
 AppendDefaultDirName=no
 UsePreviousAppDir=no
 DefaultGroupName=NYX Browser
@@ -23,7 +23,7 @@ OutputDir=..\installer
 OutputBaseFilename=NYX_Browser_{#AppVersion}_Setup_x64
 ArchitecturesInstallIn64BitMode=x64compatible
 ArchitecturesAllowed=x64compatible
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 Compression=lzma2
 SolidCompression=yes
 CloseApplications=yes
@@ -49,8 +49,8 @@ Name: "desktopicon"; Description: "{cm:DesktopIconTask}"; GroupDescription: "{cm
 
 [Dirs]
 Name: "{app}"
-Name: "{app}\UserData"
-Name: "{app}\UserData\NYX Browser"
+Name: "{app}\UserData"; Permissions: users-modify
+Name: "{app}\UserData\NYX Browser"; Permissions: users-modify
 
 [Files]
 Source: "..\dist\NYX Browser\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -84,14 +84,6 @@ Root: HKCU; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueN
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchApp}"; Flags: nowait postinstall skipifsilent
 
 [Code]
-function DefaultNYXDir(Param: string): string;
-begin
-  if DirExists('D:\') then
-    Result := 'D:\Programs\NYX Browser'
-  else
-    Result := ExpandConstant('{localappdata}\Programs\NYX Browser');
-end;
-
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   UserDataDir: string;
