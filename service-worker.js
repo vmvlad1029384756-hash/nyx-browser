@@ -12,6 +12,8 @@ const CORE_ASSETS = [
   "/mobile-site.js",
   "/support.css",
   "/favicon.svg",
+  "/icons/nyx-192.png",
+  "/icons/nyx-512.png",
   "/manifest.webmanifest",
   "/ads-config.js",
   "/monetization.css",
