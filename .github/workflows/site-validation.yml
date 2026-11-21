@@ -91,7 +91,10 @@ jobs:
           ]:
               assert asset in sw, f"Missing PWA core asset: {asset}"
           assert manifest.get("start_url", "").startswith("/")
-          assert manifest.get("scope") == "/"\n          for icon in manifest.get("icons", []):\n              icon_path = root / icon["src"].lstrip("/")\n              assert icon_path.is_file(), f"Missing PWA icon: {icon_path}"
+          assert manifest.get("scope") == "/"
+          for icon in manifest.get("icons", []):
+              icon_path = root / icon["src"].lstrip("/")
+              assert icon_path.is_file(), f"Missing PWA icon: {icon_path}"
           assert "@media (max-width: 680px)" in css
           assert ".demo-browser" in css and "user-select: text" in css
           assert "prefers-reduced-motion" in css
