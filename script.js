@@ -116,3 +116,55 @@ downloadLink.addEventListener("click", (event) => {
 
 // Начальный язык сайта.
 setLanguage("ru");
+
+/* ==========================================
+   NYX — SCROLL REVEAL & FAQ INTERACTIONS
+   ========================================== */
+
+// Плавное появление элементов при прокрутке
+const revealElements = document.querySelectorAll(
+    ".hero-content, .hero-visual, .section-heading, " +
+    ".feature-card, .about-visual, .about-content, " +
+    ".download-panel, .faq-item, .section-footnote"
+);
+
+if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver(
+        (entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("is-visible");
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        {
+            threshold: 0.12,
+            rootMargin: "0px 0px -35px 0px"
+        }
+    );
+
+    revealElements.forEach((element) => {
+        element.classList.add("reveal-on-scroll");
+        revealObserver.observe(element);
+    });
+} else {
+    revealElements.forEach((element) => {
+        element.classList.add("is-visible");
+    });
+}
+
+// Открываем только один вопрос FAQ одновременно
+const faqItems = document.querySelectorAll(".faq-item");
+
+faqItems.forEach((item) => {
+    item.addEventListener("toggle", () => {
+        if (item.open) {
+            faqItems.forEach((otherItem) => {
+                if (otherItem !== item) {
+                    otherItem.open = false;
+                }
+            });
+        }
+    });
+});
