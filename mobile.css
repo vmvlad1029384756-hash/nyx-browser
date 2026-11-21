@@ -143,3 +143,11 @@ input, textarea, [contenteditable="true"], .demo-address-form input,
   html, body { max-width: 100%; overflow-x: clip !important; }
   .ambient { display: none !important; }
 }
+
+@media (max-width: 1200px) {
+  html, body { max-width: 100%; overflow-x: clip !important; }
+  .ambient { display: none !important; }
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(22px, 3vw, 36px); }
+  .hero-copy, .hero-art { min-width: 0; }
+  .hero h1 { font-size: clamp(42px, 5vw, 58px); }
+}
