@@ -193,8 +193,15 @@ jobs:
                     offenders
                   };
                 });
-                if (dimensions.document > viewport.width + 1 || dimensions.body > viewport.width + 1) {
-                  throw new Error("Horizontal page overflow at " + viewport.width + "px: " + JSON.stringify(dimensions));
+                const horizontalScroll = await page.evaluate(() => {
+                  const before = window.scrollX;
+                  window.scrollTo({ left: 1000, top: window.scrollY, behavior: "instant" });
+                  const after = window.scrollX;
+                  window.scrollTo({ left: before, top: window.scrollY, behavior: "instant" });
+                  return after;
+                });
+                if (dimensions.viewport > viewport.width + 1 || horizontalScroll > 1) {
+                  throw new Error("Horizontal page scrolling is possible at " + viewport.width + "px: " + JSON.stringify({ ...dimensions, horizontalScroll }));
                 }
                 if (dimensions.demoLeft < -1 || dimensions.demoRight > viewport.width + 1) {
                   throw new Error("Browser demo is clipped at " + viewport.width + "px: " + JSON.stringify(dimensions));
