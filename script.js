@@ -85,15 +85,41 @@ function setLanguage(language) {
   );
 }
 
+
 languageToggle.addEventListener("click", () => {
   setLanguage(currentLanguage === "ru" ? "en" : "ru");
+
+  if (typeof window.nyxNotify === "function") {
+    window.nyxNotify(
+      currentLanguage === "ru"
+        ? "Язык сайта изменён на русский."
+        : "Website language changed to English.",
+      "success",
+      currentLanguage === "ru" ? "Язык изменён" : "Language changed"
+    );
+  }
 });
+
+
 
 menuToggle.addEventListener("click", () => {
   const isOpen = nav.classList.toggle("open");
+
   menuToggle.setAttribute("aria-expanded", String(isOpen));
   menuToggle.textContent = isOpen ? "×" : "☰";
+
+  if (typeof window.nyxNotify === "function") {
+    window.nyxNotify(
+      currentLanguage === "ru"
+        ? (isOpen ? "Навигационное меню открыто." : "Навигационное меню закрыто.")
+        : (isOpen ? "Navigation menu opened." : "Navigation menu closed."),
+      "info",
+      "NYX Browser",
+      2200
+    );
+  }
 });
+
 
 nav.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => {
@@ -108,11 +134,24 @@ document.getElementById("year").textContent = new Date().getFullYear();
 // Пока официальная ссылка на установщик не опубликована,
 // не отправляем посетителей на несуществующий адрес.
 const downloadLink = document.getElementById("download-link");
+
 downloadLink.href = "#download";
+
 downloadLink.addEventListener("click", (event) => {
   event.preventDefault();
-  alert(translations[currentLanguage].downloadAlert);
+
+  if (typeof window.nyxNotify === "function") {
+    window.nyxNotify(
+      translations[currentLanguage].downloadAlert,
+      "info",
+      currentLanguage === "ru"
+        ? "Загрузка NYX"
+        : "NYX Download",
+      5000
+    );
+  }
 });
+
 
 // Начальный язык сайта.
 setLanguage("ru");
