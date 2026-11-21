@@ -1,0 +1,5 @@
+/* NYX website monetization slots — hidden until a real ad account is configured */
+.nyx-ad-slot{width:min(calc(100% - 48px),var(--max));min-height:0;margin:22px auto;display:none;align-items:center;justify-content:center;overflow:hidden}
+.nyx-ad-slot.is-active{display:flex;min-height:110px}
+.nyx-ad-slot ins.adsbygoogle{display:block;width:100%;min-height:90px}
+@media(max-width:680px){.nyx-ad-slot{width:min(calc(100% - 36px),var(--max));margin:16px auto}.nyx-ad-slot.is-active{min-height:100px}}
