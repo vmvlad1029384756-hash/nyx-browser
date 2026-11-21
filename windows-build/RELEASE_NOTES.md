@@ -1,18 +1,26 @@
-## NYX Browser 1.0.0-dev.3.2 — Windows x64 preview
+## NYX Browser 1.0.0-dev.3.3 — Windows x64 preview
 
-This is an early Windows x64 test build of NYX Browser.
+This preview adds a language chooser, destination-folder selection and per-user default-browser registration.
 
-### Install
-1. Download NYX_Browser_1.0.0-dev.3.2_Setup_x64.exe from the Assets section.
-2. Run the installer. It installs per-user and does not require administrator privileges.
-3. Optionally select the desktop shortcut, then launch NYX Browser.
+### Installer
+- Select Russian or English before the wizard starts.
+- The initial destination is D:\Programs\NYX Browser when drive D: exists.
+- Use the folder field or Browse button to select another drive and folder.
+- Installation is per-user and does not require administrator privileges.
+- The browser profile, cookies, history, WebEngine cache and default downloads folder are placed under the selected install folder\UserData\NYX Browser, on the same drive.
+- When an existing profile is found in %LOCALAPPDATA%\NYX Browser, NYX copies it to the selected data folder and keeps the original as a safety copy.
 
-Python, PyInstaller and Inno Setup are build tools only. They are not required on the computer where NYX is installed.
+### Default browser
+NYX registers support for HTTP, HTTPS, HTM and HTML. Windows controls the final choice: use the new globe button in NYX to open Windows Default Apps, select NYX Browser and confirm. The installer does not silently change protected Windows defaults.
+
+### Icon
+The application and installer icons use a transparent NYX vector mark without a black square background.
 
 ### Important
 - Windows 10/11 x64.
-- This is a development preview, not a stable release. Test site compatibility and browser functions on your own PC before relying on it.
+- This is a development preview, not a stable release.
 - The installer is not code-signed. Windows SmartScreen may show an unknown-publisher warning.
-- The installer does not intentionally remove the browser profile or user data when uninstalling.
+- User data is intentionally retained when the application is uninstalled.
+- Password secrets remain in Windows Credential Manager, managed by Windows.
 - NYX does not claim to bypass network, regional, DNS, TLS or site-side restrictions.
-- Report crashes or broken features through the GitHub Issues page, including your Windows version and the steps to reproduce the issue.
+- Physical Windows testing is still required before calling this a stable release.
