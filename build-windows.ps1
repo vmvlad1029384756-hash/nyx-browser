@@ -86,6 +86,7 @@ try {
     }
     if (-not $iscc) { throw "Inno Setup 6 was not found. Install it, then run this script again." }
 
+    New-Item -ItemType Directory -Force -Path (Join-Path $sourceRoot "installer") | Out-Null
     Write-Host "[NYX] Creating the per-user Windows installer..."
     & $iscc /Qp (Join-Path $sourceRoot "setup\NYX_Browser.iss")
     if ($LASTEXITCODE -ne 0) { throw "Inno Setup compilation failed." }
