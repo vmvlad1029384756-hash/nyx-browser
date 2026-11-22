@@ -454,10 +454,12 @@ SEARCH_ENGINES = {
 }
 def looks_like_url(value: str) -> bool:
     text = (value or "").strip()
-    if not text or any(ch.isspace() for ch in text):
+    if not text:
         return False
     if _SCHEME.match(text):
         return True
+    if any(ch.isspace() for ch in text):
+        return False
     authority = re.split(r"[/\?#]", text, maxsplit=1)[0]
     return bool(_DOMAIN.fullmatch(authority))
 def resolve_address_input(value: str, engine: str = "Google") -> tuple[QUrl, bool]:
