@@ -237,7 +237,7 @@ DB_FILE = APP_DIR / 'nyx.db'
                         "from PySide6.QtWidgets import QApplication, QMessageBox\nfrom PySide6.QtCore import QTimer, QUrl\n", 1)
     main = main.replace("from nyx.core.storage import load_settings, init_db\n",
                         "from nyx.core.storage import load_settings, init_db\nfrom nyx.core.data_paths import DATA_LOCATION_WARNING\nfrom nyx.core.default_browser import register_default_browser\n", 1)
-    main = re.sub(r"1\\.0\\.0-dev\\.3\\.\\d+", "1.0.0-dev.3.8", main)
+    main = re.sub(r"1\.0\.0-dev\.3\.\.d+", "1.0.0-dev.3.8", main)
     old_start = """    window=MainWindow();window.show()
     sys.exit(app.exec())
 """
@@ -264,7 +264,7 @@ DB_FILE = APP_DIR / 'nyx.db'
     window = window_path.read_text(encoding="utf-8")
     window = window.replace("from nyx.core.password_vault import list_credentials, get_password\n",
                             "from nyx.core.password_vault import list_credentials, get_password\nfrom nyx.core.default_browser import register_default_browser, open_default_apps_settings\n", 1)
-    window = re.sub(r"1\\.0\\.0-dev\\.3\\.\\d+", "1.0.0-dev.3.8", window)
+    window = re.sub(r"1\.0\.0-dev\.3\.\.d+", "1.0.0-dev.3.8", window)
     old_toolbar = """        self.incognito_btn=self._button('◉','Новое окно инкогнито · Ctrl+Shift+N',self.open_incognito_window); self.incognito_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.incognito_btn)
         self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)
 """
@@ -532,7 +532,7 @@ def configure_proxy(settings: dict) -> None:
     profile_anchor = "        self.profile.settings().setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)"
     profile_patch = """        # Remove the QtWebEngine product token while preserving the actual Chromium version.
         try:
-            ua = re.sub(r"\\\\s+QtWebEngine/[^\\\\s]+", "", self.profile.httpUserAgent()).strip()
+            ua = re.sub(r"\\s+QtWebEngine/[^\\s]+", "", self.profile.httpUserAgent()).strip()
             self.profile.setHttpUserAgent(ua)
         except Exception:
             pass
@@ -632,7 +632,7 @@ def configure_proxy(settings: dict) -> None:
 
     main_path = root / "nyx" / "main.py"
     main = main_path.read_text(encoding="utf-8")
-    main = re.sub(r"1\\\\.0\\\\.0-dev\\\\.3\\\\.\\\\d+", "1.0.0-dev.3.8", main)
+    main = re.sub(r"1\.0\.0-dev\.3\.\.d+", "1.0.0-dev.3.8", main)
     main_path.write_text(main, encoding="utf-8")
 
     (tests / "test_navigation.py").write_text(r'''import unittest
