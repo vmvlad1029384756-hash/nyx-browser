@@ -85,9 +85,9 @@ jobs:
           assert "Тестовую версию NYX для Windows 10/11 x64" in js
           assert "Windows 10/11 x64 preview is available" in js
           assert "https://github.com/vmvlad1029384756-hash/nyx-browser/https://github.com" not in html
-          assert "releases/download/v1.0.0-dev.3.9/NYX_Browser_1.0.0-dev.3.9_Setup_x64.exe" in html
-          assert "releases/tag/v1.0.0-dev.3.9" in html
-          assert "const CACHE_NAME = \"nyx-site-shell-v7\";" in sw
+          assert "releases/download/v1.0.0-dev.3.10/NYX_Browser_1.0.0-dev.3.10_Setup_x64.exe" in html
+          assert "releases/tag/v1.0.0-dev.3.10" in html
+          assert "const CACHE_NAME = \"nyx-site-shell-v8\";" in sw
           for asset in [
               "/", "/index.html", "/support.html", "/style.css", "/mobile.css",
               "/script.js", "/mobile-site.js", "/manifest.webmanifest"
