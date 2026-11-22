@@ -326,8 +326,8 @@ class BrowserTab(QWidget):
         1,
     )
     browser_tab = browser_tab.replace(
-        "        self.load_home()\\n",
-        "        if load_home:\\n            self.load_home()\\n",
+        "        self.load_home()\n",
+        "        if load_home:\n            self.load_home()\n",
         1,
     )
     browser_tab = browser_tab.replace(
@@ -335,7 +335,7 @@ class BrowserTab(QWidget):
         "            page = NYXWebEnginePage(self.profile, view, self)",
         1,
     )
-    old_popup_anchor = "    def _new_view(self):\\n"
+    old_popup_anchor = "    def _new_view(self):\n"
     popup_method = """    def create_popup_page(self):
         main_window = self.window()
         if hasattr(main_window, "create_popup_tab"):
@@ -358,7 +358,7 @@ class BrowserTab(QWidget):
     browser_tab_path.write_text(browser_tab.replace(old_page, new_page, 1), encoding="utf-8")
 
     old_tab_start = "        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode)\n"
-    new_tab_start = """        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode)
+    new_tab_start = """        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode, load_home=load_home)
         tab.fullScreenRequested.connect(self.handle_web_fullscreen_request)
 """
     if old_tab_start not in window:
@@ -418,7 +418,19 @@ class BrowserTab(QWidget):
         self._position_sidebar()
 
 '''
-    anchor_method = "    def new_tab(self,url:QUrl|None=None):\n"
+    fullscreen_methods += """    def create_popup_tab(self):
+        # Called by QWebEnginePage.createWindow for target=_blank / window.open.
+        self.new_tab(load_home=False)
+        tab = self.current_tab()
+        return tab.view.page() if tab else None
+
+"""
+    window = window.replace(
+        "    def new_tab(self,url:QUrl|None=None):",
+        "    def new_tab(self,url:QUrl|None=None, load_home: bool = True):",
+        1,
+    )
+    anchor_method = "    def new_tab(self,url:QUrl|None=None, load_home: bool = True):\n"
     if anchor_method not in window:
         raise RuntimeError("MainWindow new_tab method anchor not found")
     window = window.replace(anchor_method, fullscreen_methods + anchor_method, 1)
