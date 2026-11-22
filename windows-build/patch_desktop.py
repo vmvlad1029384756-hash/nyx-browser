@@ -305,11 +305,11 @@ DB_FILE = APP_DIR / 'nyx.db'
     browser_tab_path = ui / "browser_tab.py"
     browser_tab = browser_tab_path.read_text(encoding="utf-8")
     old_class = "class BrowserTab(QWidget):"
-    new_class = "class BrowserTab(QWidget):\\n    fullScreenRequested = Signal(object, object)"
+    new_class = "class BrowserTab(QWidget):\n    fullScreenRequested = Signal(object, object)"
     if old_class not in browser_tab:
         raise RuntimeError("BrowserTab class declaration not found")
     browser_tab = browser_tab.replace(old_class, new_class, 1)
-    old_page = "        page=view.page()\\n"
+    old_page = "        page=view.page()\n"
     new_page = """        page=view.page()
         if hasattr(page, 'fullScreenRequested'):
             page.fullScreenRequested.connect(
@@ -320,7 +320,7 @@ DB_FILE = APP_DIR / 'nyx.db'
         raise RuntimeError("BrowserTab page initialization not found")
     browser_tab_path.write_text(browser_tab.replace(old_page, new_page, 1), encoding="utf-8")
 
-    old_tab_start = "        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode)\\n"
+    old_tab_start = "        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode)\n"
     new_tab_start = """        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode)
         tab.fullScreenRequested.connect(self.handle_web_fullscreen_request)
 """
@@ -381,7 +381,7 @@ DB_FILE = APP_DIR / 'nyx.db'
         self._position_sidebar()
 
 '''
-    anchor_method = "    def new_tab(self,url:QUrl|None=None):\\n"
+    anchor_method = "    def new_tab(self,url:QUrl|None=None):\n"
     if anchor_method not in window:
         raise RuntimeError("MainWindow new_tab method anchor not found")
     window = window.replace(anchor_method, fullscreen_methods + anchor_method, 1)
