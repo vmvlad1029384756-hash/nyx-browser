@@ -1,5 +1,5 @@
 #define AppName "NYX Browser"
-#define AppVersion "1.0.0-dev.3.9"
+#define AppVersion "1.0.0-dev.3.10"
 #define AppPublisher "NYX"
 #define AppExeName "NYX Browser.exe"
 
