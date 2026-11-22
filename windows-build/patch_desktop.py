@@ -346,7 +346,7 @@ class BrowserTab(QWidget):
     if old_popup_anchor not in browser_tab:
         raise RuntimeError("BrowserTab view factory anchor not found")
     browser_tab = browser_tab.replace(old_popup_anchor, popup_method + old_popup_anchor, 1)
-    old_page = "        page=view.page()\\n"
+    old_page = "        page=view.page()\n"
     new_page = """        page=view.page()
         if hasattr(page, 'fullScreenRequested'):
             page.fullScreenRequested.connect(
@@ -451,6 +451,9 @@ class FullscreenSupportTests(unittest.TestCase):
         self.assertIn("request.accept()", main_window)
         self.assertIn("self.showFullScreen()", main_window)
         self.assertIn("self._position_sidebar()", main_window)
+        self.assertIn("def createWindow(self, window_type)", browser_tab)
+        self.assertIn("return self.browser_tab.create_popup_page()", browser_tab)
+        self.assertIn("def create_popup_tab(self)", main_window)
 
 if __name__ == "__main__":
     unittest.main()
