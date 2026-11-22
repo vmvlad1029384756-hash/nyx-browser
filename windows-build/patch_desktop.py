@@ -236,7 +236,7 @@ DB_FILE = APP_DIR / 'nyx.db'
                         "from PySide6.QtWidgets import QApplication, QMessageBox\nfrom PySide6.QtCore import QTimer, QUrl\n", 1)
     main = main.replace("from nyx.core.storage import load_settings, init_db\n",
                         "from nyx.core.storage import load_settings, init_db\nfrom nyx.core.data_paths import DATA_LOCATION_WARNING\nfrom nyx.core.default_browser import register_default_browser\n", 1)
-    main = main.replace("1.0.0-dev.3.2", "1.0.0-dev.3.6")
+    main = main.replace("1.0.0-dev.3.2", "1.0.0-dev.3.7")
     old_start = """    window=MainWindow();window.show()
     sys.exit(app.exec())
 """
@@ -263,7 +263,7 @@ DB_FILE = APP_DIR / 'nyx.db'
     window = window_path.read_text(encoding="utf-8")
     window = window.replace("from nyx.core.password_vault import list_credentials, get_password\n",
                             "from nyx.core.password_vault import list_credentials, get_password\nfrom nyx.core.default_browser import register_default_browser, open_default_apps_settings\n", 1)
-    window = window.replace("1.0.0-dev.3.2", "1.0.0-dev.3.6")
+    window = window.replace("1.0.0-dev.3.2", "1.0.0-dev.3.7")
     old_toolbar = """        self.incognito_btn=self._button('◉','Новое окно инкогнито · Ctrl+Shift+N',self.open_incognito_window); self.incognito_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.incognito_btn)
         self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)
 """
@@ -300,6 +300,165 @@ DB_FILE = APP_DIR / 'nyx.db'
         raise RuntimeError("Tools menu list not found")
     window_path.write_text(window.replace(needle, repl, 1), encoding="utf-8")
 
+    # Qt WebEngine enables the Fullscreen API at profile level, but a page must
+    # also accept fullScreenRequested and the browser chrome must get out of the way.
+    browser_tab_path = ui / "browser_tab.py"
+    browser_tab = browser_tab_path.read_text(encoding="utf-8")
+    old_class = "class BrowserTab(QWidget):"
+    new_class = """class NYXWebEnginePage(QWebEnginePage):
+    def __init__(self, profile, view, browser_tab):
+        super().__init__(profile, view)
+        self.browser_tab = browser_tab
+
+    def createWindow(self, window_type):
+        # Chromium calls this for target=_blank and window.open().
+        return self.browser_tab.create_popup_page()
+
+
+class BrowserTab(QWidget):
+    fullScreenRequested = Signal(object, object)"""
+    if old_class not in browser_tab:
+        raise RuntimeError("BrowserTab class declaration not found")
+    browser_tab = browser_tab.replace(old_class, new_class, 1)
+    browser_tab = browser_tab.replace(
+        "    def __init__(self, profile=None, parent=None, private_mode: bool = False):",
+        "    def __init__(self, profile=None, parent=None, private_mode: bool = False, load_home: bool = True):",
+        1,
+    )
+    browser_tab = browser_tab.replace(
+        "        self.load_home()\n",
+        "        if load_home:\n            self.load_home()\n",
+        1,
+    )
+    browser_tab = browser_tab.replace(
+        "            page = QWebEnginePage(self.profile, view)",
+        "            page = NYXWebEnginePage(self.profile, view, self)",
+        1,
+    )
+    old_popup_anchor = "    def _new_view(self):\n"
+    popup_method = """    def create_popup_page(self):
+        main_window = self.window()
+        if hasattr(main_window, "create_popup_tab"):
+            return main_window.create_popup_tab()
+        return None
+
+"""
+    if old_popup_anchor not in browser_tab:
+        raise RuntimeError("BrowserTab view factory anchor not found")
+    browser_tab = browser_tab.replace(old_popup_anchor, popup_method + old_popup_anchor, 1)
+    old_page = "        page=view.page()\n"
+    new_page = """        page=view.page()
+        if hasattr(page, 'fullScreenRequested'):
+            page.fullScreenRequested.connect(
+                lambda request, v=view: self.fullScreenRequested.emit(v, request)
+            )
+"""
+    if old_page not in browser_tab:
+        raise RuntimeError("BrowserTab page initialization not found")
+    browser_tab_path.write_text(browser_tab.replace(old_page, new_page, 1), encoding="utf-8")
+
+    old_tab_start = "        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode)\n"
+    new_tab_start = """        tab=BrowserTab(profile=self.profile, private_mode=self.private_mode, load_home=load_home)
+        tab.fullScreenRequested.connect(self.handle_web_fullscreen_request)
+"""
+    if old_tab_start not in window:
+        raise RuntimeError("MainWindow new-tab initialization not found")
+    window = window.replace(old_tab_start, new_tab_start, 1)
+
+    fullscreen_methods = '''    def handle_web_fullscreen_request(self, view, request):
+        """Honor HTML5 fullscreen requests (YouTube, video players and web apps)."""
+        try:
+            entering = bool(request.toggleOn())
+            request.accept()
+        except Exception:
+            try:
+                request.reject()
+            except Exception:
+                pass
+            return
+
+        if entering:
+            if getattr(self, "_web_fullscreen_active", False):
+                return
+            self._web_fullscreen_active = True
+            self._web_fullscreen_was_maximized = self.isMaximized()
+            widgets = {
+                "title_bar": self.title_bar,
+                "tab_row": self.tabs.tab_row,
+                "toolbar": self.toolbar,
+                "sidebar": self.sidebar,
+                "status": self.status,
+            }
+            self._web_fullscreen_visibility = {
+                name: widget.isVisible() for name, widget in widgets.items()
+            }
+            for widget in widgets.values():
+                widget.hide()
+            self.showFullScreen()
+            view.setFocus()
+            return
+
+        if not getattr(self, "_web_fullscreen_active", False):
+            return
+        self._web_fullscreen_active = False
+        if getattr(self, "_web_fullscreen_was_maximized", False):
+            self.showMaximized()
+        else:
+            self.showNormal()
+        visibility = getattr(self, "_web_fullscreen_visibility", {})
+        widgets = {
+            "title_bar": self.title_bar,
+            "tab_row": self.tabs.tab_row,
+            "toolbar": self.toolbar,
+            "sidebar": self.sidebar,
+            "status": self.status,
+        }
+        for name, widget in widgets.items():
+            widget.setVisible(visibility.get(name, True))
+        self._position_sidebar()
+
+'''
+    fullscreen_methods += """    def create_popup_tab(self):
+        # Called by QWebEnginePage.createWindow for target=_blank / window.open.
+        self.new_tab(load_home=False)
+        tab = self.current_tab()
+        return tab.view.page() if tab else None
+
+"""
+    window = window.replace(
+        "    def new_tab(self,url:QUrl|None=None):",
+        "    def new_tab(self,url:QUrl|None=None, load_home: bool = True):",
+        1,
+    )
+    anchor_method = "    def new_tab(self,url:QUrl|None=None, load_home: bool = True):\n"
+    if anchor_method not in window:
+        raise RuntimeError("MainWindow new_tab method anchor not found")
+    window = window.replace(anchor_method, fullscreen_methods + anchor_method, 1)
+    window_path.write_text(window, encoding="utf-8")
+
+    (tests / "test_fullscreen_support.py").write_text(r'''from pathlib import Path
+import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+
+class FullscreenSupportTests(unittest.TestCase):
+    def test_webengine_fullscreen_request_is_wired(self):
+        browser_tab = (ROOT / "nyx" / "ui" / "browser_tab.py").read_text(encoding="utf-8")
+        main_window = (ROOT / "nyx" / "ui" / "main_window.py").read_text(encoding="utf-8")
+        self.assertIn("fullScreenRequested = Signal(object, object)", browser_tab)
+        self.assertIn("page.fullScreenRequested.connect", browser_tab)
+        self.assertIn("request.toggleOn()", main_window)
+        self.assertIn("request.accept()", main_window)
+        self.assertIn("self.showFullScreen()", main_window)
+        self.assertIn("self._position_sidebar()", main_window)
+        self.assertIn("def createWindow(self, window_type)", browser_tab)
+        self.assertIn("return self.browser_tab.create_popup_page()", browser_tab)
+        self.assertIn("def create_popup_tab(self)", main_window)
+
+if __name__ == "__main__":
+    unittest.main()
+''', encoding="utf-8")
+
     (tests / "test_windows_install_options.py").write_text(r'''from pathlib import Path
 import tempfile
 import unittest
@@ -335,7 +494,7 @@ if __name__ == "__main__":
     unittest.main()
 ''', encoding="utf-8")
 
-    (root / "VERSION.txt").write_text("1.0.0-dev.3.6\n", encoding="utf-8")
+    (root / "VERSION.txt").write_text("1.0.0-dev.3.7\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
