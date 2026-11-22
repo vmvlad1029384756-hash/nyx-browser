@@ -62,7 +62,7 @@ jobs:
         with:
           tag_name: v1.0.0-dev.3.6
           target_commitish: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
-          name: NYX Browser 1.0.0-dev.3.5 — Windows x64 preview
+          name: NYX Browser 1.0.0-dev.3.6 — Windows x64 preview
           body_path: windows-build/RELEASE_NOTES.md
           prerelease: true
           make_latest: false
