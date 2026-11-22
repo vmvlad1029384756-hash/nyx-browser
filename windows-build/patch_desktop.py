@@ -237,7 +237,7 @@ DB_FILE = APP_DIR / 'nyx.db'
                         "from PySide6.QtWidgets import QApplication, QMessageBox\nfrom PySide6.QtCore import QTimer, QUrl\n", 1)
     main = main.replace("from nyx.core.storage import load_settings, init_db\n",
                         "from nyx.core.storage import load_settings, init_db\nfrom nyx.core.data_paths import DATA_LOCATION_WARNING\nfrom nyx.core.default_browser import register_default_browser\n", 1)
-    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.8", main)
+    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.9", main)
     old_start = """    window=MainWindow();window.show()
     sys.exit(app.exec())
 """
@@ -262,9 +262,14 @@ DB_FILE = APP_DIR / 'nyx.db'
 
     window_path = ui / "main_window.py"
     window = window_path.read_text(encoding="utf-8")
+    window = window.replace(
+        "from PySide6.QtCore import Qt, QUrl, QUrlQuery, Signal, QEvent, QTimer, QStringListModel, QPropertyAnimation, QEasingCurve, QSize\\n",
+        "from PySide6.QtCore import Qt, QUrl, QUrlQuery, Signal, QObject, QEvent, QTimer, QStringListModel, QPropertyAnimation, QEasingCurve, QSize\\n",
+        1,
+    )
     window = window.replace("from nyx.core.password_vault import list_credentials, get_password\n",
                             "from nyx.core.password_vault import list_credentials, get_password\nfrom nyx.core.default_browser import register_default_browser, open_default_apps_settings\n", 1)
-    window = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.8", window)
+    window = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.9", window)
     old_toolbar = """        self.incognito_btn=self._button('◉','Новое окно инкогнито · Ctrl+Shift+N',self.open_incognito_window); self.incognito_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.incognito_btn)
         self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)
 """
@@ -435,6 +440,88 @@ class BrowserTab(QWidget):
     if anchor_method not in window:
         raise RuntimeError("MainWindow new_tab method anchor not found")
     window = window.replace(anchor_method, fullscreen_methods + anchor_method, 1)
+    resize_helper = r'''
+
+class NativeWindowEdgeResizer(QObject):
+    """Restore native Windows resize borders for NYX's frameless window."""
+    def __init__(self, window):
+        super().__init__(window)
+        self.window = window
+
+    def _edges_at(self, point):
+        rect = self.window.frameGeometry()
+        x = point.x() - rect.left()
+        y = point.y() - rect.top()
+        margin = 9
+        edges = Qt.Edge(0)
+        if x <= margin: edges |= Qt.Edge.LeftEdge
+        elif x >= rect.width() - margin: edges |= Qt.Edge.RightEdge
+        if y <= margin: edges |= Qt.Edge.TopEdge
+        elif y >= rect.height() - margin: edges |= Qt.Edge.BottomEdge
+        return edges
+
+    def eventFilter(self, watched, event):
+        try:
+            if not hasattr(watched, "window") or watched.window() is not self.window:
+                return False
+            if self.window.isMaximized() or self.window.isFullScreen():
+                return False
+            kind = event.type()
+            if kind not in (QEvent.Type.MouseButtonPress, QEvent.Type.MouseMove):
+                return False
+            point = event.globalPosition().toPoint()
+            edges = self._edges_at(point)
+            if kind == QEvent.Type.MouseMove:
+                if edges == (Qt.Edge.LeftEdge | Qt.Edge.TopEdge) or edges == (Qt.Edge.RightEdge | Qt.Edge.BottomEdge):
+                    self.window.setCursor(Qt.CursorShape.SizeFDiagCursor)
+                elif edges == (Qt.Edge.RightEdge | Qt.Edge.TopEdge) or edges == (Qt.Edge.LeftEdge | Qt.Edge.BottomEdge):
+                    self.window.setCursor(Qt.CursorShape.SizeBDiagCursor)
+                elif edges & (Qt.Edge.LeftEdge | Qt.Edge.RightEdge):
+                    self.window.setCursor(Qt.CursorShape.SizeHorCursor)
+                elif edges & (Qt.Edge.TopEdge | Qt.Edge.BottomEdge):
+                    self.window.setCursor(Qt.CursorShape.SizeVerCursor)
+                else:
+                    self.window.unsetCursor()
+                return False
+            if event.button() == Qt.MouseButton.LeftButton and edges:
+                handle = self.window.windowHandle()
+                if handle and handle.startSystemResize(edges):
+                    event.accept()
+                    return True
+        except Exception:
+            return False
+        return False
+
+'''
+    if "class NativeWindowEdgeResizer(QObject):" not in window:
+        class_anchor = "class MainWindow(QMainWindow):"
+        if class_anchor not in window:
+            raise RuntimeError("MainWindow class anchor not found for native resizing")
+        window = window.replace(class_anchor, resize_helper + "\n" + class_anchor, 1)
+    init_anchor = "        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)\n"
+    init_patch = """        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
+        # QApplication-level filtering catches mouse presses on every child widget at the true outer edge.
+        self._native_edge_resizer = NativeWindowEdgeResizer(self)
+        app_instance = QApplication.instance()
+        if app_instance is not None:
+            app_instance.installEventFilter(self._native_edge_resizer)
+"""
+    if init_anchor not in window:
+        raise RuntimeError("Frameless window setup anchor not found")
+    window = window.replace(init_anchor, init_patch, 1)
+
+    toolbar_anchor = """        self.extensions_btn=self._button('◈','Расширения',self.open_extensions); self.extensions_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.extensions_btn)
+"""
+    toolbar_patch = toolbar_anchor + """        self.youbusta_toolbar_btn=self._button('Ю','ЮБуст для YouTube · установка и настройки',self.open_extensions); self.youbusta_toolbar_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.youbusta_toolbar_btn)
+"""
+    if toolbar_anchor not in window:
+        raise RuntimeError("Extensions toolbar button anchor not found")
+    window = window.replace(toolbar_anchor, toolbar_patch, 1)
+    window = window.replace(
+        "self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)",
+        "self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.youbusta_toolbar_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)",
+        1,
+    )
     window_path.write_text(window, encoding="utf-8")
 
     # Reliable URL detection, persistent proxy credentials, and modern-site compatibility.
@@ -635,7 +722,7 @@ def configure_proxy(settings: dict) -> None:
 
     main_path = root / "nyx" / "main.py"
     main = main_path.read_text(encoding="utf-8")
-    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.8", main)
+    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.9", main)
     main_path.write_text(main, encoding="utf-8")
 
     (tests / "test_navigation.py").write_text(r'''import unittest
@@ -678,6 +765,28 @@ class ProxyProfileTests(unittest.TestCase):
     def test_credentials_are_keyed_by_endpoint_and_type(self):
         self.assertEqual(proxy_credential_key({"type":"SOCKS5","host":"127.0.0.1","port":1080}),
                          "SOCKS5|127.0.0.1|1080")
+
+if __name__ == "__main__":
+    unittest.main()
+''', encoding="utf-8")
+
+    (tests / "test_native_window_resize.py").write_text(r'''from pathlib import Path
+import unittest
+
+ROOT = Path(__file__).resolve().parents[1]
+
+class NativeWindowResizeTests(unittest.TestCase):
+    def test_frameless_window_has_native_edge_resize_filter(self):
+        source = (ROOT / "nyx" / "ui" / "main_window.py").read_text(encoding="utf-8")
+        self.assertIn("class NativeWindowEdgeResizer(QObject):", source)
+        self.assertIn("handle.startSystemResize(edges)", source)
+        self.assertIn("app_instance.installEventFilter(self._native_edge_resizer)", source)
+        self.assertIn("self.window.isMaximized() or self.window.isFullScreen()", source)
+
+    def test_youbusta_has_quick_access_from_toolbar(self):
+        source = (ROOT / "nyx" / "ui" / "main_window.py").read_text(encoding="utf-8")
+        self.assertIn("self.youbusta_toolbar_btn", source)
+        self.assertIn("self.open_extensions", source)
 
 if __name__ == "__main__":
     unittest.main()
@@ -741,7 +850,7 @@ if __name__ == "__main__":
     unittest.main()
 ''', encoding="utf-8")
 
-    (root / "VERSION.txt").write_text("1.0.0-dev.3.8\n", encoding="utf-8")
+    (root / "VERSION.txt").write_text("1.0.0-dev.3.9\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

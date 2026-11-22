@@ -1,19 +1,15 @@
-# NYX Browser 1.0.0-dev.3.8 — Windows x64 preview
+# NYX Browser 1.0.0-dev.3.9 — Windows x64 preview
 
-## Address bar
-- Fixed URL detection for complete https:// URLs, domains with paths and query strings, localhost and host:port inputs.
-- URL input now opens the destination directly; plain words continue to use the selected search engine.
+## Native Windows window behavior
+- Restored native resizing on all four edges and corners for NYX's frameless custom window.
+- Uses QWindow.startSystemResize so Windows handles interactive resizing, snapping and tiling instead of simulated geometry changes.
+- Keeps native title-bar move handling, so dragging NYX to screen edges can use Windows 11 Snap behavior.
 
-## Proxy Switcher
-- Proxy credentials are saved in the operating system credential store through Python keyring instead of plaintext settings.
-- Imported Simple Proxy Switcher entries keep their own credentials per proxy endpoint.
-- Selected saved profiles restore their password automatically.
-- Proxy username and password are supplied automatically when Chromium requests proxy authentication.
-- Proxy changes still require restarting NYX because the proxy must be configured before the first WebEngine profile is created.
+## YouBusta quick access
+- Added a dedicated YouBusta toolbar shortcut that opens the extension manager directly.
+- The official YouBusta installer remains in the extension manager and requires explicit user approval for its requested permissions.
+- YouBusta depends on Qt WebEngine's Manifest V3 extension support. The extension uses advanced APIs including proxy and webRequest; Qt WebEngine does not guarantee full Chrome API parity, so the extension must be tested in the actual NYX build before claiming all features work.
 
-## ChatGPT and modern websites
-- Removed the QtWebEngine product token from the browser user-agent while preserving the actual Chromium version.
-- Enabled JavaScript-created windows/popups used by authentication flows.
-- Retains the dev.3.7 fullscreen and popup-tab fixes.
-
-The build and automated tests do not replace a live test with your specific proxy provider or ChatGPT account. If ChatGPT still fails, capture the exact page/error so the next fix can target the actual failure rather than guessing.
+## Preserved
+- dev.3.8 address bar direct URL routing and proxy credential fixes.
+- dev.3.7 YouTube fullscreen and popup-tab fixes.
