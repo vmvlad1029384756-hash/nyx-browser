@@ -174,3 +174,31 @@ body:after{content:"";position:fixed;z-index:-1;pointer-events:none;left:var(--p
 @media(prefers-reduced-motion:reduce){body:after,.ambient-a,.ambient-b,.section-head h2 em,.direction-copy h2 em{animation:none!important;transition:none!important}.site-scroll-progress{display:none}}
 
 .download-note{max-width:650px!important;margin:15px auto 0!important;color:#9b91ad!important;font-size:11px!important;line-height:1.7!important;text-align:center}
+
+
+/* Demo sidebar: expand on hover and keyboard focus when not pinned. */
+.demo-sidebar.collapsed:not(.pinned):hover,
+.demo-sidebar.collapsed:not(.pinned):focus-within {
+  width: 145px;
+  padding-inline: 9px;
+  position: relative;
+  z-index: 5;
+  box-shadow: 12px 0 28px #0008;
+}
+.demo-sidebar.collapsed:not(.pinned):hover .demo-side-brand > span:last-child,
+.demo-sidebar.collapsed:not(.pinned):focus-within .demo-side-brand > span:last-child,
+.demo-sidebar.collapsed:not(.pinned):hover .demo-side-item > span,
+.demo-sidebar.collapsed:not(.pinned):focus-within .demo-side-item > span {
+  display: inline;
+  opacity: 1;
+  max-width: 110px;
+}
+.demo-sidebar.docked-right.collapsed:not(.pinned):hover,
+.demo-sidebar.docked-right.collapsed:not(.pinned):focus-within {
+  box-shadow: -12px 0 28px #0008;
+}
+@media (hover: none) {
+  .demo-sidebar.collapsed:not(.pinned):hover { width: 48px; padding-inline: 7px; }
+  .demo-sidebar.collapsed:not(.pinned):hover .demo-side-brand > span:last-child,
+  .demo-sidebar.collapsed:not(.pinned):hover .demo-side-item > span { display: none; }
+}
