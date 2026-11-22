@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import struct
 import sys
@@ -236,7 +237,7 @@ DB_FILE = APP_DIR / 'nyx.db'
                         "from PySide6.QtWidgets import QApplication, QMessageBox\nfrom PySide6.QtCore import QTimer, QUrl\n", 1)
     main = main.replace("from nyx.core.storage import load_settings, init_db\n",
                         "from nyx.core.storage import load_settings, init_db\nfrom nyx.core.data_paths import DATA_LOCATION_WARNING\nfrom nyx.core.default_browser import register_default_browser\n", 1)
-    main = main.replace("1.0.0-dev.3.2", "1.0.0-dev.3.7")
+    main = re.sub(r"1\\.0\\.0-dev\\.3\\.\\d+", "1.0.0-dev.3.8", main)
     old_start = """    window=MainWindow();window.show()
     sys.exit(app.exec())
 """
@@ -263,7 +264,7 @@ DB_FILE = APP_DIR / 'nyx.db'
     window = window_path.read_text(encoding="utf-8")
     window = window.replace("from nyx.core.password_vault import list_credentials, get_password\n",
                             "from nyx.core.password_vault import list_credentials, get_password\nfrom nyx.core.default_browser import register_default_browser, open_default_apps_settings\n", 1)
-    window = window.replace("1.0.0-dev.3.2", "1.0.0-dev.3.7")
+    window = re.sub(r"1\\.0\\.0-dev\\.3\\.\\d+", "1.0.0-dev.3.8", window)
     old_toolbar = """        self.incognito_btn=self._button('◉','Новое окно инкогнито · Ctrl+Shift+N',self.open_incognito_window); self.incognito_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.incognito_btn)
         self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)
 """
@@ -436,6 +437,248 @@ class BrowserTab(QWidget):
     window = window.replace(anchor_method, fullscreen_methods + anchor_method, 1)
     window_path.write_text(window, encoding="utf-8")
 
+    # Reliable URL detection, persistent proxy credentials, and modern-site compatibility.
+    (core / "navigation.py").write_text(r'''"""Address-bar URL detection and search routing."""
+from __future__ import annotations
+import re
+from urllib.parse import quote
+from PySide6.QtCore import QUrl
+
+_SCHEME = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*:")
+_DOMAIN = re.compile(r"^(?:localhost|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|\[[0-9a-fA-F:]+\]|(?:\d{1,3}\.){3}\d{1,3})(?::\d{1,5})?$")
+SEARCH_ENGINES = {
+    "Google": "https://www.google.com/search?q=",
+    "DuckDuckGo": "https://duckduckgo.com/?q=",
+    "Bing": "https://www.bing.com/search?q=",
+    "Brave Search": "https://search.brave.com/search?q=",
+}
+def looks_like_url(value: str) -> bool:
+    text = (value or "").strip()
+    if not text or any(ch.isspace() for ch in text):
+        return False
+    if _SCHEME.match(text):
+        return text.split(":", 1)[0].lower() in {"http", "https", "ftp", "file", "about"}
+    authority = re.split(r"[/\?#]", text, maxsplit=1)[0]
+    return bool(_DOMAIN.fullmatch(authority))
+def resolve_address_input(value: str, engine: str = "Google") -> tuple[QUrl, bool]:
+    """Return (destination, is_search); URL input is never sent to search."""
+    text = (value or "").strip()
+    if looks_like_url(text):
+        return QUrl.fromUserInput(text), False
+    base = SEARCH_ENGINES.get(engine, SEARCH_ENGINES["Google"])
+    return QUrl(base + quote(text, safe="")), True
+''', encoding="utf-8")
+
+    (core / "proxy.py").write_text(r'''from __future__ import annotations
+from PySide6.QtNetwork import QNetworkProxy
+try:
+    import keyring
+except Exception:
+    keyring = None
+
+KEYRING_SERVICE = "NYX Browser Proxy"
+def proxy_credential_key(settings: dict) -> str:
+    kind = settings.get("proxy_type", settings.get("type", "HTTP"))
+    return "|".join((str(kind).upper(), str(settings.get("proxy_host", settings.get("host", ""))).strip().lower(), str(int(settings.get("proxy_port", settings.get("port", 0)) or 0))))
+def save_proxy_password(settings: dict, password: str) -> bool:
+    if not password or keyring is None or not (settings.get("proxy_host") or settings.get("host")):
+        return False
+    try:
+        keyring.set_password(KEYRING_SERVICE, proxy_credential_key(settings), password)
+        return True
+    except Exception:
+        return False
+def get_proxy_password(settings: dict) -> str:
+    direct = str(settings.get("proxy_password", ""))
+    if direct:
+        return direct
+    if keyring is None or not (settings.get("proxy_host") or settings.get("host")):
+        return ""
+    try:
+        return keyring.get_password(KEYRING_SERVICE, proxy_credential_key(settings)) or ""
+    except Exception:
+        return ""
+def configure_proxy(settings: dict) -> None:
+    """Configure Qt WebEngine's Chromium network stack before profiles are created."""
+    if not settings.get("proxy_enabled"):
+        QNetworkProxy.setApplicationProxy(QNetworkProxy(QNetworkProxy.ProxyType.NoProxy))
+        return
+    host = str(settings.get("proxy_host", "")).strip()
+    try:
+        port = int(settings.get("proxy_port") or 0)
+    except (TypeError, ValueError):
+        port = 0
+    if not host or not (1 <= port <= 65535):
+        QNetworkProxy.setApplicationProxy(QNetworkProxy(QNetworkProxy.ProxyType.NoProxy))
+        return
+    proxy_type = str(settings.get("proxy_type", "HTTP")).upper()
+    kind = QNetworkProxy.ProxyType.Socks5Proxy if proxy_type == "SOCKS5" else QNetworkProxy.ProxyType.HttpProxy
+    proxy = QNetworkProxy(kind, host, port)
+    username = str(settings.get("proxy_username", "")).strip()
+    password = get_proxy_password(settings)
+    if username:
+        proxy.setUser(username)
+    if password:
+        proxy.setPassword(password)
+    QNetworkProxy.setApplicationProxy(proxy)
+''', encoding="utf-8")
+
+    window = window.replace(
+        "from nyx.core.proxy import configure_proxy\n",
+        "from nyx.core.proxy import configure_proxy, get_proxy_password, save_proxy_password\n"
+        "from nyx.core.navigation import resolve_address_input\n",
+        1,
+    )
+    profile_anchor = "        self.profile.settings().setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)"
+    profile_patch = """        # Remove the QtWebEngine product token while preserving the actual Chromium version.
+        try:
+            ua = re.sub(r"\\\\s+QtWebEngine/[^\\\\s]+", "", self.profile.httpUserAgent()).strip()
+            self.profile.setHttpUserAgent(ua)
+        except Exception:
+            pass
+        self.profile.setProperty('nyxProxyUsername', str(self.settings.get('proxy_username', '')).strip())
+        self.profile.setProperty('nyxProxyPassword', get_proxy_password(self.settings))
+        self.profile.settings().setAttribute(QWebEngineSettings.WebAttribute.JavascriptCanOpenWindows, True)
+        self.profile.settings().setAttribute(QWebEngineSettings.WebAttribute.LocalStorageEnabled, True)"""
+    if profile_anchor not in window:
+        raise RuntimeError("WebEngine profile settings anchor not found")
+    window = window.replace(profile_anchor, profile_patch, 1)
+
+    old_address = """        part=raw.split('/')[0]; is_url='.' in part and ' ' not in raw
+        if is_url:
+            url=QUrl.fromUserInput(raw if '://' in raw else 'https://'+raw)
+        else:
+            engine=self.settings.get('search_engine','Google')
+            engines={'Google':'https://www.google.com/search?q=','DuckDuckGo':'https://duckduckgo.com/?q=','Bing':'https://www.bing.com/search?q=','Brave Search':'https://search.brave.com/search?q='}
+            base=engines.get(engine,engines['Google'])
+            url=QUrl(base+QUrl.toPercentEncoding(raw).data().decode('ascii'))
+            record_search(raw, engine, private=self.private_mode)"""
+    new_address = """        engine=self.settings.get('search_engine','Google')
+        url,is_search=resolve_address_input(raw, engine)
+        if is_search:
+            record_search(raw, engine, private=self.private_mode)"""
+    if old_address not in window:
+        raise RuntimeError("Address bar routing block not found")
+    window = window.replace(old_address, new_address, 1)
+
+    save_anchor = """            persisted=dict(self.settings); persisted.pop('proxy_password',None)
+            save_settings(persisted); self.refresh_addons(); self.apply_theme()"""
+    save_patch = """            if self.settings.get('proxy_password'):
+                save_proxy_password(self.settings, self.settings.get('proxy_password', ''))
+            self.profile.setProperty('nyxProxyUsername', str(self.settings.get('proxy_username', '')).strip())
+            self.profile.setProperty('nyxProxyPassword', get_proxy_password(self.settings))
+            persisted=dict(self.settings); persisted.pop('proxy_password',None)
+            save_settings(persisted); self.refresh_addons(); self.apply_theme()"""
+    if save_anchor not in window:
+        raise RuntimeError("Settings save anchor not found")
+    window = window.replace(save_anchor, save_patch, 1)
+    window = window.replace(
+        "Настройки сохранены. Поиск и оформление обновлены; прокси применится после перезапуска.",
+        "Настройки сохранены. Поиск и оформление обновлены; для смены прокси перезапусти NYX."
+    )
+    window_path.write_text(window, encoding="utf-8")
+
+    browser_tab_path = ui / "browser_tab.py"
+    browser_tab = browser_tab_path.read_text(encoding="utf-8")
+    old_auth = """    def _proxy_authentication(self,url,authenticator,proxy_host=''):
+        username,ok=QInputDialog.getText(self,'Авторизация прокси',f'Логин для прокси {proxy_host or url.host()}:')
+        if not ok: return
+        password,ok=QInputDialog.getText(self,'Авторизация прокси','Пароль:',QLineEdit.EchoMode.Password)
+        if ok:
+            authenticator.setUser(username); authenticator.setPassword(password)"""
+    new_auth = """    def _proxy_authentication(self,url,authenticator,proxy_host=''):
+        username = str(self.profile.property('nyxProxyUsername') or '') if self.profile else ''
+        password = str(self.profile.property('nyxProxyPassword') or '') if self.profile else ''
+        if username and password:
+            authenticator.setUser(username); authenticator.setPassword(password)
+            return
+        username,ok=QInputDialog.getText(self,'Авторизация прокси',f'Логин для прокси {proxy_host or url.host()}:',text=username)
+        if not ok: return
+        password,ok=QInputDialog.getText(self,'Авторизация прокси','Пароль:',QLineEdit.EchoMode.Password)
+        if ok:
+            authenticator.setUser(username); authenticator.setPassword(password)"""
+    if old_auth not in browser_tab:
+        raise RuntimeError("Proxy authentication handler not found")
+    browser_tab_path.write_text(browser_tab.replace(old_auth, new_auth, 1), encoding="utf-8")
+
+    dialogs_path = ui / "dialogs.py"
+    dialogs = dialogs_path.read_text(encoding="utf-8")
+    dialogs = dialogs.replace(
+        "from nyx.core.proxy_profiles import parse_proxy_line",
+        "from nyx.core.proxy_profiles import parse_proxy_line\nfrom nyx.core.proxy import save_proxy_password, get_proxy_password",
+        1,
+    )
+    dialogs = dialogs.replace(
+        "self.proxy_user.setText(profile.get('username', '')); self.proxy_password.clear()",
+        "self.proxy_user.setText(profile.get('username', '')); self.proxy_password.setText(get_proxy_password({'proxy_type': profile.get('type', 'HTTP'), 'proxy_host': profile.get('host', ''), 'proxy_port': profile.get('port', 8080)}))",
+        1,
+    )
+    dialogs = dialogs.replace(
+        "self.proxy_profiles.append(profile); self.refresh_proxy_presets(); self.proxy_presets.setCurrentIndex(self.proxy_presets.count() - 1)",
+        "self.proxy_profiles.append(profile); save_proxy_password(profile, self.proxy_password.text()); self.refresh_proxy_presets(); self.proxy_presets.setCurrentIndex(self.proxy_presets.count() - 1)",
+        1,
+    )
+    dialogs = dialogs.replace(
+        "self.proxy_profiles.append(profile); added += 1\n            last_password = parsed.get('password', '')",
+        "self.proxy_profiles.append(profile); save_proxy_password(profile, parsed.get('password', '')); added += 1\n            last_password = parsed.get('password', '')",
+        1,
+    )
+    dialogs = dialogs.replace("Пароль на время текущего запуска", "Пароль (сохранится в хранилище Windows)")
+    dialogs = dialogs.replace(
+        "Пароли намеренно не включены в экспорт.",
+        "Пароли сохраняются отдельно в системном хранилище учётных данных, а не в открытом файле настроек."
+    )
+    dialogs_path.write_text(dialogs, encoding="utf-8")
+
+    main_path = root / "nyx" / "main.py"
+    main = main_path.read_text(encoding="utf-8")
+    main = re.sub(r"1\\\\.0\\\\.0-dev\\\\.3\\\\.\\\\d+", "1.0.0-dev.3.8", main)
+    main_path.write_text(main, encoding="utf-8")
+
+    (tests / "test_navigation.py").write_text(r'''import unittest
+from nyx.core.navigation import looks_like_url, resolve_address_input
+
+class AddressNavigationTests(unittest.TestCase):
+    def test_full_https_url_with_path_is_direct_navigation(self):
+        url, is_search = resolve_address_input("https://example.com/path?q=nyx", "Google")
+        self.assertFalse(is_search)
+        self.assertEqual(url.toString(), "https://example.com/path?q=nyx")
+    def test_domain_with_path_is_direct_navigation(self):
+        self.assertTrue(looks_like_url("example.com/docs/page"))
+        self.assertFalse(resolve_address_input("example.com/docs/page")[1])
+    def test_domain_with_port_is_direct_navigation(self):
+        self.assertTrue(looks_like_url("localhost:8080/status"))
+        self.assertTrue(looks_like_url("192.168.1.10:8080"))
+    def test_plain_words_use_search_engine(self):
+        url, is_search = resolve_address_input("NYX Browser help", "DuckDuckGo")
+        self.assertTrue(is_search)
+        self.assertTrue(url.toString().startswith("https://duckduckgo.com/?q="))
+
+if __name__ == "__main__":
+    unittest.main()
+''', encoding="utf-8")
+    (tests / "test_proxy_profiles_secure.py").write_text(r'''import unittest
+from nyx.core.proxy import proxy_credential_key
+from nyx.core.proxy_profiles import parse_proxy_line
+
+class ProxyProfileTests(unittest.TestCase):
+    def test_simple_proxy_switcher_format(self):
+        parsed = parse_proxy_line("127.0.0.1:8080:alice:secret")
+        self.assertEqual((parsed["host"], parsed["port"], parsed["username"], parsed["password"]),
+                         ("127.0.0.1", 8080, "alice", "secret"))
+    def test_uri_proxy_format(self):
+        parsed = parse_proxy_line("socks5://alice:secret@127.0.0.1:1080")
+        self.assertEqual(parsed["type"], "SOCKS5")
+        self.assertEqual(parsed["username"], "alice")
+        self.assertEqual(parsed["password"], "secret")
+    def test_credentials_are_keyed_by_endpoint_and_type(self):
+        self.assertEqual(proxy_credential_key({"type":"SOCKS5","host":"127.0.0.1","port":1080}),
+                         "SOCKS5|127.0.0.1|1080")
+
+if __name__ == "__main__":
+    unittest.main()
+''', encoding="utf-8")
+
     (tests / "test_fullscreen_support.py").write_text(r'''from pathlib import Path
 import unittest
 
@@ -494,7 +737,7 @@ if __name__ == "__main__":
     unittest.main()
 ''', encoding="utf-8")
 
-    (root / "VERSION.txt").write_text("1.0.0-dev.3.7\n", encoding="utf-8")
+    (root / "VERSION.txt").write_text("1.0.0-dev.3.8\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
