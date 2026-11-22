@@ -237,6 +237,30 @@ DB_FILE = APP_DIR / 'nyx.db'
                         "from PySide6.QtWidgets import QApplication, QMessageBox\nfrom PySide6.QtCore import QTimer, QUrl\n", 1)
     main = main.replace("from nyx.core.storage import load_settings, init_db\n",
                         "from nyx.core.storage import load_settings, init_db\nfrom nyx.core.data_paths import DATA_LOCATION_WARNING\nfrom nyx.core.default_browser import register_default_browser\n", 1)
+    # QtWebEngine uses Chromium's proxy stack; QNetworkProxy alone does not route WebEngine traffic.
+    main = main.replace("import sys\n", "import sys\nimport os\n", 1)
+    proxy_bootstrap = """\n# Apply Chromium proxy flags before QApplication/QWebEngine initialization.
+try:
+    _nyx_proxy = load_settings()
+    if _nyx_proxy.get('proxy_enabled'):
+        _host = str(_nyx_proxy.get('proxy_host', '')).strip()
+        _port = int(_nyx_proxy.get('proxy_port') or 0)
+        _kind = str(_nyx_proxy.get('proxy_type', 'HTTP')).upper()
+        if _host and 1 <= _port <= 65535:
+            _scheme = 'socks5' if _kind == 'SOCKS5' else 'http'
+            _proxy_arg = f'--proxy-server={_scheme}://{_host}:{_port}'
+            _flags = os.environ.get('QTWEBENGINE_CHROMIUM_FLAGS', '')
+            if '--proxy-server=' not in _flags:
+                os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = (_flags + ' ' + _proxy_arg).strip()
+    else:
+        _flags = os.environ.get('QTWEBENGINE_CHROMIUM_FLAGS', '')
+        os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = ' '.join(x for x in _flags.split() if not x.startswith('--proxy-server='))
+except Exception:
+    pass
+"""
+    main = main.replace("app=QApplication(sys.argv)", proxy_bootstrap + "\\napp=QApplication(sys.argv)", 1)
+    if "proxy_bootstrap" not in main:
+        raise RuntimeError("Proxy bootstrap injection failed")
     main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.10", main)
     old_start = """    window=MainWindow();window.show()
     sys.exit(app.exec())
