@@ -305,11 +305,48 @@ DB_FILE = APP_DIR / 'nyx.db'
     browser_tab_path = ui / "browser_tab.py"
     browser_tab = browser_tab_path.read_text(encoding="utf-8")
     old_class = "class BrowserTab(QWidget):"
-    new_class = "class BrowserTab(QWidget):\n    fullScreenRequested = Signal(object, object)"
+    new_class = """class NYXWebEnginePage(QWebEnginePage):
+    def __init__(self, profile, view, browser_tab):
+        super().__init__(profile, view)
+        self.browser_tab = browser_tab
+
+    def createWindow(self, window_type):
+        # Chromium calls this for target=_blank and window.open().
+        return self.browser_tab.create_popup_page()
+
+
+class BrowserTab(QWidget):
+    fullScreenRequested = Signal(object, object)"""
     if old_class not in browser_tab:
         raise RuntimeError("BrowserTab class declaration not found")
     browser_tab = browser_tab.replace(old_class, new_class, 1)
-    old_page = "        page=view.page()\n"
+    browser_tab = browser_tab.replace(
+        "    def __init__(self, profile=None, parent=None, private_mode: bool = False):",
+        "    def __init__(self, profile=None, parent=None, private_mode: bool = False, load_home: bool = True):",
+        1,
+    )
+    browser_tab = browser_tab.replace(
+        "        self.load_home()\\n",
+        "        if load_home:\\n            self.load_home()\\n",
+        1,
+    )
+    browser_tab = browser_tab.replace(
+        "            page = QWebEnginePage(self.profile, view)",
+        "            page = NYXWebEnginePage(self.profile, view, self)",
+        1,
+    )
+    old_popup_anchor = "    def _new_view(self):\\n"
+    popup_method = """    def create_popup_page(self):
+        main_window = self.window()
+        if hasattr(main_window, "create_popup_tab"):
+            return main_window.create_popup_tab()
+        return None
+
+"""
+    if old_popup_anchor not in browser_tab:
+        raise RuntimeError("BrowserTab view factory anchor not found")
+    browser_tab = browser_tab.replace(old_popup_anchor, popup_method + old_popup_anchor, 1)
+    old_page = "        page=view.page()\\n"
     new_page = """        page=view.page()
         if hasattr(page, 'fullScreenRequested'):
             page.fullScreenRequested.connect(
