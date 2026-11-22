@@ -444,7 +444,7 @@ import re
 from urllib.parse import quote
 from PySide6.QtCore import QUrl
 
-_SCHEME = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.-]*:")
+_SCHEME = re.compile(r"^(?:https?|ftp|file|about):", re.IGNORECASE)
 _DOMAIN = re.compile(r"^(?:localhost|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|\[[0-9a-fA-F:]+\]|(?:\d{1,3}\.){3}\d{1,3})(?::\d{1,5})?$")
 SEARCH_ENGINES = {
     "Google": "https://www.google.com/search?q=",
@@ -457,14 +457,15 @@ def looks_like_url(value: str) -> bool:
     if not text or any(ch.isspace() for ch in text):
         return False
     if _SCHEME.match(text):
-        return text.split(":", 1)[0].lower() in {"http", "https", "ftp", "file", "about"}
+        return True
     authority = re.split(r"[/\?#]", text, maxsplit=1)[0]
     return bool(_DOMAIN.fullmatch(authority))
 def resolve_address_input(value: str, engine: str = "Google") -> tuple[QUrl, bool]:
     """Return (destination, is_search); URL input is never sent to search."""
     text = (value or "").strip()
     if looks_like_url(text):
-        return QUrl.fromUserInput(text), False
+        target = text if _SCHEME.match(text) else "https://" + text
+        return QUrl.fromUserInput(target), False
     base = SEARCH_ENGINES.get(engine, SEARCH_ENGINES["Google"])
     return QUrl(base + quote(text, safe="")), True
 ''', encoding="utf-8")
@@ -648,6 +649,7 @@ class AddressNavigationTests(unittest.TestCase):
         self.assertFalse(resolve_address_input("example.com/docs/page")[1])
     def test_domain_with_port_is_direct_navigation(self):
         self.assertTrue(looks_like_url("localhost:8080/status"))
+        self.assertFalse(resolve_address_input("localhost:8080/status")[1])
         self.assertTrue(looks_like_url("192.168.1.10:8080"))
     def test_plain_words_use_search_engine(self):
         url, is_search = resolve_address_input("NYX Browser help", "DuckDuckGo")
