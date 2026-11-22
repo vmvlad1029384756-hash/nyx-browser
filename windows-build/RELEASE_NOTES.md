@@ -1,15 +1,16 @@
-# NYX Browser 1.0.0-dev.3.9 — Windows x64 preview
+# NYX Browser 1.0.0-dev.3.10 — Windows x64 preview
 
-## Native Windows window behavior
-- Restored native resizing on all four edges and corners for NYX's frameless custom window.
-- Uses QWindow.startSystemResize so Windows handles interactive resizing, snapping and tiling instead of simulated geometry changes.
-- Keeps native title-bar move handling, so dragging NYX to screen edges can use Windows 11 Snap behavior.
+## Startup crash
+- Fixed a missing QObject import in the native Windows window-edge resize handler that caused dev.3.9 to fail on launch.
 
-## YouBusta quick access
-- Added a dedicated YouBusta toolbar shortcut that opens the extension manager directly.
-- The official YouBusta installer remains in the extension manager and requires explicit user approval for its requested permissions.
-- YouBusta depends on Qt WebEngine's Manifest V3 extension support. The extension uses advanced APIs including proxy and webRequest; Qt WebEngine does not guarantee full Chrome API parity, so the extension must be tested in the actual NYX build before claiming all features work.
+## Updating and profile retention
+- Installer now remembers the previous installation directory instead of defaulting to a new directory on each update.
+- This keeps the existing UserData folder beside the application and avoids creating a fresh empty profile when updating in place.
+- The installer does not intentionally delete browser profile data during an in-place update.
 
-## Preserved
-- dev.3.8 address bar direct URL routing and proxy credential fixes.
-- dev.3.7 YouTube fullscreen and popup-tab fixes.
+## Still under investigation
+- Search suggestions/history dropdown behavior.
+- Proxy profile selection persistence and full Simple Proxy Switcher compatibility.
+- In-app update download and safe replacement flow.
+
+These remaining items are not marked as fixed until the source behavior and upgrade path have been verified.

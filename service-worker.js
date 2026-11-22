@@ -1,7 +1,7 @@
 /* NYX website PWA service worker. This caches the project website shell only. */
 "use strict";
 
-const CACHE_NAME = "nyx-site-shell-v7";
+const CACHE_NAME = "nyx-site-shell-v8";
 const CORE_ASSETS = [
   "/",
   "/index.html",
