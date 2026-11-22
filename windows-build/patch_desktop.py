@@ -237,7 +237,7 @@ DB_FILE = APP_DIR / 'nyx.db'
                         "from PySide6.QtWidgets import QApplication, QMessageBox\nfrom PySide6.QtCore import QTimer, QUrl\n", 1)
     main = main.replace("from nyx.core.storage import load_settings, init_db\n",
                         "from nyx.core.storage import load_settings, init_db\nfrom nyx.core.data_paths import DATA_LOCATION_WARNING\nfrom nyx.core.default_browser import register_default_browser\n", 1)
-    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.9", main)
+    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.10", main)
     old_start = """    window=MainWindow();window.show()
     sys.exit(app.exec())
 """
@@ -262,14 +262,13 @@ DB_FILE = APP_DIR / 'nyx.db'
 
     window_path = ui / "main_window.py"
     window = window_path.read_text(encoding="utf-8")
-    window = window.replace(
-        "from PySide6.QtCore import Qt, QUrl, QUrlQuery, Signal, QEvent, QTimer, QStringListModel, QPropertyAnimation, QEasingCurve, QSize\\n",
-        "from PySide6.QtCore import Qt, QUrl, QUrlQuery, Signal, QObject, QEvent, QTimer, QStringListModel, QPropertyAnimation, QEasingCurve, QSize\\n",
-        1,
-    )
+    qtcore_import = "from PySide6.QtCore import Qt, QUrl, QUrlQuery, Signal, QEvent, QTimer, QStringListModel, QPropertyAnimation, QEasingCurve, QSize"
+    if qtcore_import not in window:
+        raise RuntimeError("QtCore import anchor not found")
+    window = window.replace(qtcore_import, qtcore_import.replace("Signal, QEvent", "Signal, QObject, QEvent"), 1)
     window = window.replace("from nyx.core.password_vault import list_credentials, get_password\n",
                             "from nyx.core.password_vault import list_credentials, get_password\nfrom nyx.core.default_browser import register_default_browser, open_default_apps_settings\n", 1)
-    window = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.9", window)
+    window = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.10", window)
     old_toolbar = """        self.incognito_btn=self._button('◉','Новое окно инкогнито · Ctrl+Shift+N',self.open_incognito_window); self.incognito_btn.setObjectName('toolbarActionButton'); self.toolbar.addWidget(self.incognito_btn)
         self.downloads_btn.setFixedSize(40,40); self.extensions_btn.setFixedSize(40,40); self.incognito_btn.setFixedSize(40,40)
 """
@@ -722,7 +721,7 @@ def configure_proxy(settings: dict) -> None:
 
     main_path = root / "nyx" / "main.py"
     main = main_path.read_text(encoding="utf-8")
-    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.9", main)
+    main = re.sub(r"1\.0\.0-dev\.3\.\d+", "1.0.0-dev.3.10", main)
     main_path.write_text(main, encoding="utf-8")
 
     (tests / "test_navigation.py").write_text(r'''import unittest
@@ -850,7 +849,7 @@ if __name__ == "__main__":
     unittest.main()
 ''', encoding="utf-8")
 
-    (root / "VERSION.txt").write_text("1.0.0-dev.3.9\n", encoding="utf-8")
+    (root / "VERSION.txt").write_text("1.0.0-dev.3.10\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
